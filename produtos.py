@@ -6,9 +6,10 @@ def MainProdutos():
     # ------------Opening Window----------------------------------
     window = gui.Tk()
     window.title("Lanchonete")
-    window.iconbitmap("egg.ico")
+    window.iconbitmap("imagens/ico.lanchonete.ico")
     window.geometry("750x500") # WxH
-    window.configure(bg="#4F4F4F")
+    window.resizable(False,False)
+    window.configure(bg="#DCDCDC")
 
     # ------------Frames----------------------------------
     frame = gui.Frame(window,background="#C0C0C0", highlightbackground="#ffffff", highlightthickness=3)
@@ -16,8 +17,8 @@ def MainProdutos():
 
     # ------------Widgets----------------------------------
     #labels
-    lblanchonetename = Label(window, text="Sistema Lanchonete", bg="#4F4F4F", fg="#ffffff", bd=0.01, font="Jokerman 35")
-    lblanchonetename.place(x=150,y=0)
+    lblanchonetename = Label(window, text="Sistema Lanchonete", bg="#DCDCDC", fg="#363636", bd=0.01, font="Broadway 35 bold")
+    lblanchonetename.place(x=115,y=0)
     labelcod = gui.Label(frame,text="Código do produto:", bg="#C0C0C0", font="Britannic 10 bold")
     labelcod.grid(row=0,column=0)
     entrycod = gui.Entry(frame)

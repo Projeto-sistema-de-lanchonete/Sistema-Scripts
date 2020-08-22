@@ -9,9 +9,10 @@ from tkinter import messagebox
 # -------------Opening Window------------------
 window=Tk()
 window.title("Lanchonete")
-window.configure(bg="#4F4F4F") # grey31 = #4F4F4F	
+window.configure(bg="#DCDCDC") # Gainsboro = #DCDCDC
+window.resizable(False,False)
 window.geometry("750x500") # WxH
-window.iconbitmap("logo.ico")	
+window.iconbitmap("imagens/ico.lanchonete.ico")	
 
 def quit_window():
       if messagebox.askokcancel("Sair","Deseja realmente sair?"):
@@ -27,7 +28,7 @@ framelogin.place(relwidth=0.60,relheight=0.75,relx=0.2,rely=0.15)
 
 #------------ Widgets----------------------
 #labels
-lblanchonetename = Label(window, text="Sistema Lanchonete", bg="#4F4F4F", fg="#ffffff", bd=0.01, font="Jokerman 35 bold")
+lblanchonetename = Label(window, text="Sistema Lanchonete", bg="#DCDCDC", fg="#363636", bd=0.01, font="Broadway 35 bold")
 lblogin = Label(framelogin, text="Login", font="Britannic 40 bold", bg="#C0C0C0")
 lbuser = Label(framelogin, text="Usuário:", font="Britannic 15 bold", bg="#C0C0C0")
 lbpassword = Label(framelogin, text="Senha:", font="Britannic 15 bold", bg="#C0C0C0")
@@ -39,7 +40,7 @@ btentrar = Button(framelogin, text="Entrar", padx=60, pady=5, command=MainMenu, 
 btexit = Button(framelogin, text="Sair", fg="red", padx=20, pady=5, command=quit_window,borderwidth=5, bg="#C0C0C0", font="Britannic 9 bold")
 
 #---------------Layout widgets------------------------
-lblanchonetename.place(x=145,y=0)
+lblanchonetename.place(x=115,y=0)
 lblogin.place(x=180,y=20)
 lbuser.place(x=180,y=100)
 lbpassword.place(x=180,y=180)
@@ -49,7 +50,7 @@ btentrar.place(x=197, y=270)
 btexit.place(x=10, y=300)
 
 #-------------Image----------------------------
-img = PhotoImage(file="imagens/login4.png")
+img = PhotoImage(file= "imagens/login4.png")
 lbimage = Label(framelogin, image= img, bg="#C0C0C0")
 lbimage.place(x=10,y=85)
 
