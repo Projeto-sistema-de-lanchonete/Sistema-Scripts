@@ -2,6 +2,7 @@ from tkinter import *
 from produtos import MainProdutos
 from clientes import MainClientes
 from usuario import MainUsuario
+from pedidos import MainPedidos
 from tkinter import messagebox
 from PIL import ImageTk, Image
 
@@ -72,7 +73,7 @@ def MainMenu():
 
 
     pedidos_menu = Menu(menu_bar,tearoff=0)
-    pedidos_menu.add_command(label="Novo")
+    pedidos_menu.add_command(label="Novo",command=MainPedidos)
     pedidos_menu.add_separator()
     menu_bar.add_cascade(label="Pedidos",menu=pedidos_menu)
 
