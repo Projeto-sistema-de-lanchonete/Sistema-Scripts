@@ -5,23 +5,24 @@ from tkinter import messagebox
 from PIL import ImageTk, Image
 
 def MainClientes():
-
-  
-    # ------------Opening Window----------------------------------
+      # ------------Opening Window----------------------------------
       window = gui.Tk()
       window.title("Cadatro de Cliente")
-      window.iconbitmap("logo.ico")
+      window.iconbitmap("imagens/ico.lanchonete.ico")
+      window.configure(bg="#DCDCDC")
       window.protocol("WM_DELETE_WINDOW")
-      window.resizable(False,False) # WxH
+      window.resizable(False,False) 
       window.geometry("950x500") # WxH
 
 
-    # ------------Frames----------------------------------
+      # ------------Frames----------------------------------
       clientes = gui.Frame(window,background="#C0C0C0", highlightbackground="#ffffff", highlightthickness=3)
       clientes.place(relwidth=0.80,relheight=0.73,relx=0.1,rely=0.15)
 
-    # ------------Widgets----------------------------------
-    #labels
+      # ------------Widgets----------------------------------
+      #labels
+      lblanchonetename = Label(window, text="Sistema Lanchonete", bg="#DCDCDC", fg="#363636", bd=0.01, font="Broadway 35 bold")
+      lblanchonetename.place(x=175,y=0)
 
       Pesquisar_Label = gui.Label(clientes,text="Pesquisar:", bg="#C0C0C0", font="Britannic 10 bold")
       Pesquisar_Label.grid(sticky=W,padx=8)
@@ -31,7 +32,6 @@ def MainClientes():
 
       Btn_Pesquisar = gui.Button(clientes,text="Pesquisar")
       Btn_Pesquisar.grid(row=0,column=2)
-    
 
       Codigo_Label = gui.Label(clientes,text="Codigo:", bg="#C0C0C0", font="Britannic 10 bold")
       Codigo_Label.grid(row=1,sticky=W,padx=8)
@@ -121,7 +121,7 @@ def MainClientes():
       Email_entry.grid(row=11,column=1,sticky=W)
 
       #botões
-   
+
 
       Btn_Salvar = gui.Button(clientes,text="Salvar",width = 15)
       Btn_Salvar.grid(row=15)
@@ -134,7 +134,7 @@ def MainClientes():
 
 
 
-    # ------------Loop End----------------------------------
+      # ------------Loop End----------------------------------
 
       window.mainloop()
 

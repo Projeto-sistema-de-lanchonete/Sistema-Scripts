@@ -12,7 +12,7 @@ def MainUsuario():
   signin_window = Toplevel()
   signin_window.title("Cadastar usuario")
   signin_window.resizable(False,False)  
-  signin_window.iconbitmap("logo.ico")
+  signin_window.iconbitmap("imagens/ico.lanchonete.ico")
 
   Label(signin_window,text="Cadastrar",font="Ariel").grid(row=0,column=0,sticky=W,pady=10)
   Usuario_label = Label(signin_window,text="Usuario :",font="Ariel,12")
