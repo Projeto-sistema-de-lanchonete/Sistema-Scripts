@@ -1,6 +1,7 @@
 from tkinter import *
 from produtos import MainProdutos
 from clientes import MainClientes
+from usuario import MainUsuario
 from tkinter import messagebox
 from PIL import ImageTk, Image
 
@@ -47,7 +48,7 @@ def MainMenu():
     file_menu = Menu(menu_bar,tearoff=0)
     file_menu.add_command(label="Clientes",command=MainClientes)
     file_menu.add_separator()
-    file_menu.add_command(label="Usuarios")
+    file_menu.add_command(label="Usuarios",command=MainUsuario)
     file_menu.add_separator()
     file_menu.add_command(label="Produtos",command=MainProdutos)
     file_menu.add_separator()    
