@@ -1,17 +1,21 @@
 from tkinter import *
 from menu import MainMenu
+from tkinter import messagebox
 
 
 #-------------Função para sair----------------
-def Quit():
-    window.quit()
-    
+
 
 # -------------Opening Window------------------
 window=Tk()
 window.title("Lanchonete")
 window.configure(bg="#4F4F4F") # grey31 = #4F4F4F	
-window.geometry("750x500") # WxH	
+window.geometry("750x500") # WxH
+window.iconbitmap("logo.ico")	
+
+def quit_window():
+      if messagebox.askokcancel("Sair","Deseja realmente sair?"):
+         window.destroy()
 
 #------------Frames-----------------------
 framelogin = Frame(window, background="#C0C0C0", highlightbackground="#ffffff", highlightthickness=3) # C0C0C0 == Silver
@@ -32,7 +36,7 @@ entryuser = Entry(framelogin, width=32, borderwidth=5)
 entrypassword = Entry(framelogin, width=32, borderwidth=5)
 #botões
 btentrar = Button(framelogin, text="Entrar", padx=60, pady=5, command=MainMenu, borderwidth=5, bg="#C0C0C0", font="Britannic 9 bold")
-btexit = Button(framelogin, text="Sair", fg="red", padx=20, pady=5, command=Quit,borderwidth=5, bg="#C0C0C0", font="Britannic 9 bold")
+btexit = Button(framelogin, text="Sair", fg="red", padx=20, pady=5, command=quit_window,borderwidth=5, bg="#C0C0C0", font="Britannic 9 bold")
 
 #---------------Layout widgets------------------------
 lblanchonetename.place(x=145,y=0)
@@ -51,6 +55,3 @@ lbimage.place(x=10,y=85)
 
 # -------------Loop End----------------------------
 window.mainloop()
-
-
-
