@@ -11,15 +11,13 @@ from PIL import ImageTk, Image
     
 
 def MainMenu():
-
-   
     # ------------Opening Window----------------------------------
     window = Tk()
-    window.title("Lanchonete")
+    window.title("Lanchonete | Menu")
     # window.iconbitmap("egg.ico")
     window.geometry("750x500") # WxH
     #window.configure(bg="#4F4F4F")
-    window.iconbitmap("logo.ico")
+    window.iconbitmap("imagens/ico.lanchonete.ico")
 
     def quit_window():
       if messagebox.askokcancel("Sair","Deseja realmente sair?"):

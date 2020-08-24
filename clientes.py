@@ -7,7 +7,7 @@ from PIL import ImageTk, Image
 def MainClientes():
       # ------------Opening Window----------------------------------
       window = gui.Tk()
-      window.title("Cadatro de Cliente")
+      window.title("Lanchonete | Cadatro de Cliente")
       window.iconbitmap("imagens/ico.lanchonete.ico")
       window.configure(bg="#DCDCDC")
       window.protocol("WM_DELETE_WINDOW")

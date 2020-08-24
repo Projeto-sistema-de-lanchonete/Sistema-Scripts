@@ -4,19 +4,17 @@ from tkinter import messagebox
 
 
 #-------------Função para sair----------------
-
+def ExitWindow():
+      if messagebox.askyesno("Sair","Deseja realmente sair?"):
+            window.destroy()
 
 # -------------Opening Window------------------
 window=Tk()
-window.title("Lanchonete")
+window.title("Lanchonete | Login")
 window.configure(bg="#DCDCDC") # Gainsboro = #DCDCDC
 window.resizable(False,False)
 window.geometry("750x500") # WxH
 window.iconbitmap("imagens/ico.lanchonete.ico")	
-
-def quit_window():
-      if messagebox.askokcancel("Sair","Deseja realmente sair?"):
-         window.destroy()
 
 
 #------------Frames-----------------------
@@ -38,7 +36,7 @@ entryuser = Entry(framelogin, width=32, borderwidth=5)
 entrypassword = Entry(framelogin, width=32, borderwidth=5)
 #botões
 btentrar = Button(framelogin, text="Entrar", padx=60, pady=5, command=MainMenu, borderwidth=5, bg="#C0C0C0", font="Britannic 9 bold")
-btexit = Button(framelogin, text="Sair", fg="red", padx=20, pady=5, command=quit_window,borderwidth=5, bg="#C0C0C0", font="Britannic 9 bold")
+btexit = Button(framelogin, text="Sair", fg="red", padx=20, pady=5, command=ExitWindow,borderwidth=5, bg="#C0C0C0", font="Britannic 9 bold")
 
 #---------------Layout widgets------------------------
 lblanchonetename.place(x=115,y=0)

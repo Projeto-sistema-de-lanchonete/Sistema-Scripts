@@ -5,33 +5,26 @@ from tkinter import messagebox
 from PIL import ImageTk, Image
 
 
-
-  
-        
- 
- 
- 
- 
-
 def deletar_lista():
       print()
 
 
 def MainPedidos():
   Pedidos_window = Toplevel()
-  Pedidos_window.title("Pedidos")
-  Pedidos_window.resizable(False,False)  
-  Pedidos_window.iconbitmap("logo.ico")
+  Pedidos_window.title("Lanchonete | Pedidos")
+  Pedidos_window.resizable(False,False) 
+  Pedidos_window.geometry("700x400") 
+  Pedidos_window.iconbitmap("imagens/ico.lanchonete.ico")
 
   def inserir_lista():
-    if  CodProd_entry.get() == "":
-      messagebox.showinfo(title="ERRO",message="Digite o codigo do produto")
-      CodProd_entry.focus()
-      return
+    if CodProd_entry.get() == "":
+          messagebox.showinfo(title="ERRO",message="Digite o codigo do produto")
+          CodProd_entry.focus()
+          return
     if  DescProd_entry.get() == "":
-      messagebox.showinfo(title="ERRO",message="Digite a Descrição")
-      DescProd_entry.focus()
-      return   
+          messagebox.showinfo(title="ERRO",message="Digite a Descrição")
+          DescProd_entry.focus()
+          return   
     if  Un_entry.get() == "":
       messagebox.showinfo(title="ERRO",message="Digitea Unidade")
       Un_entry.focus()
@@ -59,62 +52,62 @@ def MainPedidos():
     CodProd_entry.focus()
 
 
-  
-
-  Label(Pedidos_window,text="Pedidos",font="Ariel").grid(row=0,column=0,sticky=W,pady=10)
-
-  CodPedido_label = Label(Pedidos_window,text="Cod. Pedido :")
+  # Label(Pedidos_window,text="Pedidos").grid(row=0,column=0,sticky=W,pady=10)
+  #codigo
+  CodPedido_label = Label(Pedidos_window,text="Cód. Pedido:", font="Britannic 10 bold")
   CodPedido_label.grid(row=0,column=0,sticky=W)
 
-  CodPedido_entry = Entry(Pedidos_window,width=10)
+  CodPedido_entry = Entry(Pedidos_window,width=30, bd=4)
   CodPedido_entry.grid(row=0,column=1,sticky=W)
+  #operador
+  CodOperador_label = Label(Pedidos_window,text="Operador:", font="Britannic 10 bold")
+  CodOperador_label.grid(row=0,column=2,sticky=W)
 
-  CodOperador_label = Label(Pedidos_window,text="Operador :")
-  CodOperador_label.grid(row=0,column=2,sticky=W,padx=60)
+  CodOperador_entry = Entry(Pedidos_window,width=30, bd=4)
+  CodOperador_entry.grid(row=0,column=3,sticky=W)
+  #produto
+  CodProd_label = Label(Pedidos_window,text="Cód. Prod:", font="Britannic 10 bold")
+  CodProd_label.grid(row=2,column=0,sticky=W)
 
-  CodOperador_entry = Entry(Pedidos_window,width=10)
-  CodOperador_entry.grid(row=0,column=3)
+  CodProd_entry = Entry(Pedidos_window,width=8, bd=4)
+  CodProd_entry.place(x=89,y=25)
 
+  DescProd_entry = Entry(Pedidos_window,width=19, bd=4)
+  DescProd_entry.place(x=154,y=25)
+  #UN
+  Un_label = Label(Pedidos_window,text="UN:", font="Britannic 10 bold")
+  Un_label.grid(row=2,column=2,sticky=W,padx=3)
 
-  CodProd_label = Label(Pedidos_window,text="Cod. Prod :")
-  CodProd_label.grid(row=1,column=0,sticky=W)
+  Un_entry = Entry(Pedidos_window,width=30, bd=4)
+  Un_entry.grid(row=2,column=3,sticky=W)
+  #quantidade
+  Qtd_label = Label(Pedidos_window,text="Qtd.:", font="Britannic 10 bold")
+  Qtd_label.grid(row=0,column=5,sticky=W)
 
-  CodProd_entry = Entry(Pedidos_window,width=10)
-  CodProd_entry.grid(row=1,column=1,sticky=W)
+  Qtd_label_entry = Entry(Pedidos_window,width=16, bd=4)
+  Qtd_label_entry.grid(row=0,column=6,sticky=W)
+  #valor
+  VlUnit_label = Label(Pedidos_window,text="Valor Unit:", font="Britannic 10 bold")
+  VlUnit_label.grid(row=3,column=0,sticky=W)
 
-  DescProd_entry = Entry(Pedidos_window,width=20)
-  DescProd_entry.grid(row=1,column=2,sticky=W)
+  VlUnit_entry = Entry(Pedidos_window,width=30, bd=4)
+  VlUnit_entry.grid(row=3,column=1,sticky=W)
+  #valor total
+  VlTotal_label = Label(Pedidos_window,text="Valor Total:", font="Britannic 10 bold")
+  VlTotal_label.grid(row=3,column=2,sticky=W)
 
+  VlTotal_entry = Entry(Pedidos_window,width=30, bd=4)
+  VlTotal_entry.grid(row=3,column=3,sticky=W)
 
-  Un_label = Label(Pedidos_window,text="UN :")
-  Un_label.grid(row=1,column=3,sticky=W,padx=3)
+  #botoes
+  Item_add = Button(Pedidos_window,text="Adicionar",width=8,command=inserir_lista)
+  Item_add.place(x=80,y=350)
 
-  Un_entry = Entry(Pedidos_window,width=4)
-  Un_entry.grid(row=1,column=4,padx=3)
-
-  Qtd_label = Label(Pedidos_window,text="Qtd. :")
-  Qtd_label.grid(row=1,column=5,sticky=W)
-
-  Qtd_label_entry = Entry(Pedidos_window,width=6)
-  Qtd_label_entry.grid(row=1,column=6,sticky=W)
-
-  VlUnit_label = Label(Pedidos_window,text="Valor Unit :")
-  VlUnit_label.grid(row=1,column=7,sticky=W)
-
-  VlUnit_entry = Entry(Pedidos_window,width=6)
-  VlUnit_entry.grid(row=1,column=8,sticky=W)
-
-  VlTotal_label = Label(Pedidos_window,text="Valor Total :")
-  VlTotal_label.grid(row=1,column=9,sticky=W)
-
-  VlTotal_entry = Entry(Pedidos_window,width=8)
-  VlTotal_entry.grid(row=1,column=10,sticky=W)
-
-
-  Item_add = Button(Pedidos_window,text="Adicionar",font="Ariel,17",width=8,command=inserir_lista)
-  Item_add.grid(row=1,column=11,rowspan=2,padx=20,sticky=W)
+  view_exist = Button(Pedidos_window,text="Imprimir")
+  view_exist.place(x=20,y=350)
 
 
+  #Treeview
   ShowItens_tv = ttk.Treeview(Pedidos_window,columns=('id','descricao','un','qtd','valorunit','valortotal'),show='headings')
   ShowItens_tv.column('id',minwidth=0,width=60)
   ShowItens_tv.column('descricao',minwidth=0,width=250)
@@ -129,18 +122,7 @@ def MainPedidos():
   ShowItens_tv.heading('qtd',text="Qtde.")
   ShowItens_tv.heading('valorunit',text="Vr Unitário")
   ShowItens_tv.heading('valortotal',text="Vr Total")
-  ShowItens_tv.grid(row=3,column=0,columnspan=12,padx=5)
+  ShowItens_tv.place(x=90,y=100)
 
-
-  
-
-
-
-
-
-
-
-  view_exist = Button(Pedidos_window,text="Imprimir")
-  view_exist.grid(row=4,column=13,rowspan=2,columnspan=4,padx=20,sticky=W+E)
 
   Pedidos_window.mainloop()
