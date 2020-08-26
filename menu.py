@@ -24,7 +24,7 @@ def MainMenu():
          window.destroy()
 
     # ------------Widgets----------------------------------
-    lblanchonetename = Label(window, text="Sistema Lanchonete", font="Ariel 35 bold")
+    lblanchonetename = Label(window, text="Sistema Lanchonete", bg="#DCDCDC", fg="#363636", bd=0.01, font="Broadway 35 bold")
     lblanchonetename.place(x=145,y=0)
 
     framelogin = Frame(window, background="#C0C0C0", highlightbackground="#ffffff", highlightthickness=3) # C0C0C0 == Silver

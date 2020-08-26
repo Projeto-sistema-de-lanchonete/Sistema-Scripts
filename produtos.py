@@ -12,14 +12,14 @@ def MainProdutos():
     window.resizable(False,False)
     window.configure(bg="#DCDCDC")
 
-    #=================labels e entrys========================
-    mynot  = ttk.Notebook(window, width= 710, height=450)
+    #=================notebook========================
+    mynot  = ttk.Notebook(window, width= 710, height=450) # criando notebook
     mynot.pack(pady=65)
 
     # ------------Frames----------------------------------
     frame1 = gui.Frame(mynot,background="#C0C0C0", highlightbackground="#ffffff", highlightthickness=3)
     frame1.place(relwidth=0.80,relheight=0.73,relx=0.1,rely=0.15)
-    mynot.add(frame1, text="Dados do produto")
+    mynot.add(frame1, text="Dados do produto") # adicionando frame no notebook
 
     frame2 = gui.Frame(mynot,background="#C0C0C0", highlightbackground="#ffffff", highlightthickness=3)
     frame2.place(relwidth=0.80,relheight=0.73,relx=0.1,rely=0.15)

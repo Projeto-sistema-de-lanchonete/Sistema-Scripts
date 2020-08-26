@@ -4,66 +4,182 @@ from tkinter import ttk
 from tkinter import messagebox
 from PIL import ImageTk, Image
 import pymysql
-
-
-
-
-
+import time
 
 
 def MainUsuario():
-  def CadastrarUsuario():
-  
-    connection = pymysql.connect(
-      host="localhost",
-      user="root",
-      password="",
-      database="db"
-     )
+      
+  def ViewUser():
+    connection = pymysql.connect(host="localhost",user="root",password="",database="bdlanchonete")
     mycursor = connection.cursor()
-    sql = "INSERT INTO usuarios (name, cpf,senha) VALUES (%s, %s,%s)"
-    val = (Usuario_entry.get(), Cpf_entry.get(),Senha_entry.get())
-    mycursor.execute(sql, val)
 
+    sqldados = "select * from usuarios;"
+    mycursor.execute(sqldados)
+    for ind in mycursor:
+          # print(mycursor)
+          visualizar.insert("","end",values=(ind))
+    view_exist["state"] = "disabled"   
+  
+  def ExcluirUsuario():
+    connection = pymysql.connect(host="localhost",user="root",password="",database="bdlanchonete")
+    mycursor = connection.cursor()
+
+    iduser = str(Id_entry.get())
+
+    sqldelete = "delete from usuarios where id = {};".format(iduser)
+    mycursor.execute(sqldelete)
+
+    Id_entry.delete(0, END)
+
+    time.sleep(2)
+    messagebox.showinfo("Info","Usuário excluido.")
+
+    mycursor.close()
     connection.commit()
-    Usuario_entry.delete(0,END)
-    Cpf_entry.delete(0,END)
-    Senha_entry.delete(0,END)
-    messagebox.showinfo(title="Aviso",message="Usuario Cadastrado com sucesso")
+    connection.close()
+    
 
+  def CadastrarUsuario():
+    connection = pymysql.connect(host="localhost",user="root",password="",database="bdlanchonete")
+    mycursor = connection.cursor()
 
+    # abrituindo os valores dos entry a uma variável-----------------
+    user = str(Usuario_entry.get())
+    cpf = str(Cpf_entry.get())
+    senha = str(Senha_entry.get())
+
+    # verificando de o usuário ou cpf ja existem----------------------
+    sqlselect = "select * from usuarios"
+    mycursor.execute(sqlselect)
+
+    for i in mycursor:
+          # print(i)
+          pass
+    if user in i:
+      messagebox.showwarning("Warning","Usuário já cadastrado!\n\nTente cadastrar outro nome.")
+
+      Usuario_entry.delete(0,END)
+      Cpf_entry.delete(0,END)
+      Senha_entry.delete(0,END)
+      
+    elif cpf in i:
+      messagebox.showwarning("Warning","Cpf já cadastrado!\n\nTente cadastrar outro cpf.")
+
+      Usuario_entry.delete(0,END)
+      Cpf_entry.delete(0,END)
+      Senha_entry.delete(0,END)
+
+    # inserindo os dados no banco -----------------------------------
+    else:  
+      # sql = "INSERT INTO usuarios (name, cpf, senha) VALUES (%s, %s,%s)"
+      # val = (Usuario_entry.get(), Cpf_entry.get(),Senha_entry.get())
+      sqlinsert = "INSERT INTO usuarios (name, cpf, senha) VALUES ('{}','{}','{}')".format(user, cpf, senha)
+      mycursor.execute(sqlinsert)
+
+      sqlid = "select id from usuarios where cpf = '{}';".format(cpf) # sql para pegar o id do usuário
+      mycursor.execute(sqlid)
+      for ind in mycursor:
+            print(mycursor)
+
+      visualizar.insert("","end",values=(ind, user, cpf)) # colando os dados no treeview
+
+      Usuario_entry.delete(0,END)
+      Cpf_entry.delete(0,END)
+      Senha_entry.delete(0,END)
+
+      time.sleep(2)
+      messagebox.showinfo(title="Info",message="Usuário cadastrado com sucesso!")
+      # Texto_label["text"] = "Usuário cadastrado com sucesso!"
+
+      mycursor.close()
+      connection.commit()
+      connection.close()
+          
 
     
 
-
+  # ----------------------------------------------------------------------
   signin_window = Toplevel()
-  signin_window.title("Lanchonete | Cadastar usuario")
+  signin_window.title("Lanchonete | Usuário")
   signin_window.resizable(False,False)  
   signin_window.iconbitmap("imagens/ico.lanchonete.ico")
-
-  # Label(signin_window,text="Cadastrar",font="Ariel").grid(row=0,column=0,sticky=W,pady=10)
-  Usuario_label = Label(signin_window,text="Usuario :",font="Ariel,12")
-  Usuario_label.grid(row=0,column=0)
-
-  Cpf_label = Label(signin_window,text="CPF :",font="Ariel,12")
-  Cpf_label.grid(row=1,column=0)
-
-  Senha_label = Label(signin_window,text="Senha :",font="Ariel,12")
-  Senha_label.grid(row=2,column=0,pady=(0,20))
-
-  Usuario_entry = Entry(signin_window, font="Ariel,10")
-  Usuario_entry.grid(row=0,column=1)
-  Cpf_entry = Entry(signin_window, font="Ariel,10")
-  Cpf_entry.grid(row=1,column=1)
-  Senha_entry = Entry(signin_window, font="Ariel,10")
-  Senha_entry.grid(row=2,column=1,pady=(0,20))
-
+  signin_window.configure(bg="#DCDCDC")
   
+  #=================notebook========================
+  mynot  = ttk.Notebook(signin_window)
+  mynot.pack(pady=10)
 
-  user_add = Button(signin_window,text="Cadastrar",font="Ariel,17",command=CadastrarUsuario)
-  user_add.grid(row=1,column=2,rowspan=2,padx=20,pady=(0,20))
+  # ------------Frames----------------------------------
+  frame1 = gui.Frame(mynot,background="#C0C0C0", highlightbackground="#ffffff", highlightthickness=3)
+  frame1.place(relwidth=0.80,relheight=0.3,relx=0.1,rely=0.2)
+  mynot.add(frame1, text="Cadastrar usuário")
 
-  view_exist = Button(signin_window,text="Visualizar Cadastros")
-  view_exist.grid(row=4,column=0,rowspan=2,columnspan=4,padx=20,pady=(0,20),sticky=W+E)
+  frame2 = gui.Frame(mynot,background="#C0C0C0", highlightbackground="#ffffff", highlightthickness=3)
+  frame2.place(relwidth=0.80,relheight=0.73,relx=0.1,rely=0.15)
+  mynot.add(frame2, text="Usuários cadastrados")
+
+  frame3 = gui.Frame(mynot,background="#C0C0C0", highlightbackground="#ffffff", highlightthickness=3)
+  frame3.place(relwidth=0.80,relheight=0.73,relx=0.1,rely=0.15)
+  mynot.add(frame3, text="Excluir/Editar usuários")
+
+  #---------labels-----------------------------
+  # Label(signin_window,text="Cadastrar",font="Ariel").grid(row=0,column=0,sticky=W,pady=10)
+
+  esp_label = Label(frame1,text="", bg="#C0C0C0")
+  esp_label.grid(row=0,column=0)
+
+  Usuario_label = Label(frame1,text="Usuário:", bg="#C0C0C0", font="Britannic 10 bold")
+  Usuario_label.grid(row=1,column=0, pady=5, padx=10) #pady e padx é o espaço ao redor
+
+  Cpf_label = Label(frame1,text="CPF:", bg="#C0C0C0", font="Britannic 10 bold")
+  Cpf_label.grid(row=2,column=0, pady=5, padx=10)
+
+  Senha_label = Label(frame1,text="Senha:", bg="#C0C0C0", font="Britannic 10 bold")
+  Senha_label.grid(row=3,column=0, pady=5, padx=10)
+
+  Texto_label = Label(frame1,text="", fg="green", bg="#C0C0C0", font="Britannic 10 bold")
+  Texto_label.grid(row=5,column=0,rowspan=20,columnspan=4,padx=20,pady=15,sticky=W+E)
+
+  Idexcluir = Label(frame3,text="ID do usuário:", bg="#C0C0C0", font="Britannic 10 bold")
+  Idexcluir.grid(row=2,column=0, pady=20, padx=10)
+
+  #---------entrys-----------------------------
+  Usuario_entry = Entry(frame1, width=35, bd=4)
+  Usuario_entry.grid(row=1,column=1,ipady=3)
+
+  Cpf_entry = Entry(frame1, width=35, bd=4)
+  Cpf_entry.grid(row=2,column=1,ipady=3)
+
+  Senha_entry = Entry(frame1, width=35, bd=4)
+  Senha_entry.grid(row=3,column=1,ipady=3)
+
+  Id_entry = Entry(frame3, width=35, bd=4)
+  Id_entry.grid(row=2,column=1,ipady=3)
+
+  #---------buttons-----------------------------
+  user_add = Button(frame1,text="Cadastrar",bg="#C0C0C0", padx=20, pady=2, borderwidth=5,command=CadastrarUsuario)
+  user_add.grid(row=4,column=0,rowspan=2,padx=20, pady=20,sticky=W+E)
+
+  excluiruser = Button(frame3,text="Excluir",bg="#C0C0C0", padx=20, pady=2, borderwidth=5,command=ExcluirUsuario)
+  excluiruser.grid(row=3,column=2,rowspan=2,columnspan=4,padx=20,pady=(0,20),sticky=W+E)
+
+  editaruser = Button(frame3,text="Editar", bg="#C0C0C0", padx=20, pady=2, borderwidth=5, command=ViewUser)
+  editaruser.grid(row=5,column=2,rowspan=2,columnspan=4,padx=20,pady=(0,20),sticky=W+E)
+
+  view_exist = Button(frame2,text="Visualizar Cadastros", bg="#C0C0C0", padx=20, pady=2, borderwidth=5, command=ViewUser)
+  view_exist.grid(row=1,column=0,rowspan=2,columnspan=4,padx=55,pady=(0,20),sticky=W+E)
+
+  #------------Treeview------------------------------
+  visualizar = ttk.Treeview(frame2,columns=('id','nome','cpf'),show='headings')
+  visualizar.column('id',minwidth=0,width=80)
+  visualizar.column('nome',minwidth=0,width=150)
+  visualizar.column('cpf',minwidth=0,width=120)
+  
+  visualizar.heading('id',text="Id")
+  visualizar.heading('nome',text="Nome")
+  visualizar.heading('cpf',text="CPF")
+  visualizar.grid(row=0,column=0,padx=55,pady=(0,20))
+
 
   signin_window.mainloop()
+  
