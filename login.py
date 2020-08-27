@@ -12,25 +12,24 @@ def MainLogin():
 
       def ValidarUser():
             user = str(entryuser.get())
-            password = str(entrypassword.get)
+            password = str(entrypassword.get())
             
             connection = mysql.connector.connect(host="localhost",user="root",password="",database="bdlanchonete")
             mycursor = connection.cursor()
 
-            sqlselect = "select * from usuarios" 
+            sqlselect = "select * from usuarios where nome like '"+user+"' and senha like '"+password+"' " 
+            print(sqlselect)
             mycursor.execute(sqlselect)
+            valido = mycursor.fetchall()
 
-            for i in mycursor:
-                  print(i)
-
-            if user in i:
-                  if password in i:
-                        btentrar["command"] = MainMenu()
-                        ExitWindow()
+            if len(valido) > 0:
+                  btentrar["command"] = MainMenu()
             else:
                   messagebox.showwarning("Warning","Usuário ou senha inválida!")
-                  entryuser.delete(0, END)
+                  # entryuser.delete(0, END)
                   entrypassword.delete(0, END)
+                   
+
             
             mycursor.close()
             connection.commit()
@@ -63,7 +62,7 @@ def MainLogin():
       lbpassword = Label(framelogin, text="Senha:", font="Britannic 15 bold", bg="#C0C0C0")
       #entrys
       entryuser = Entry(framelogin, width=32, borderwidth=5)
-      entrypassword = Entry(framelogin, width=32, borderwidth=5)
+      entrypassword = Entry(framelogin, width=32, borderwidth=5,show="*")
       #botões
       btentrar = Button(framelogin, text="Entrar", padx=60, pady=5, command=ValidarUser, borderwidth=5, bg="#C0C0C0", font="Britannic 9 bold")
       btexit = Button(framelogin, text="Sair", fg="red", padx=20, pady=5, command=ExitWindow,borderwidth=5, bg="#C0C0C0", font="Britannic 9 bold")
@@ -82,6 +81,7 @@ def MainLogin():
       img = PhotoImage(file= "imagens/login4.png")
       lbimage = Label(framelogin, image= img, bg="#C0C0C0")
       lbimage.place(x=10,y=85)
+      entryuser.focus()
 
       # -------------Loop End----------------------------
       window.mainloop()

@@ -38,7 +38,7 @@ def MainUsuario():
     connection.commit()
     connection.close()
     
-
+# Funçao para Cadastra o cadastro de usuário 
   def CadastrarUsuario():
     connection = pymysql.connect(host="localhost",user="root",password="",database="bdlanchonete")
     mycursor = connection.cursor()
@@ -73,7 +73,7 @@ def MainUsuario():
     else:  
       # sql = "INSERT INTO usuarios (name, cpf, senha) VALUES (%s, %s,%s)"
       # val = (Usuario_entry.get(), Cpf_entry.get(),Senha_entry.get())
-      sqlinsert = "INSERT INTO usuarios (name, cpf, senha) VALUES ('{}','{}','{}')".format(user, cpf, senha)
+      sqlinsert = "INSERT INTO usuarios (nome, cpf, senha) VALUES ('{}','{}','{}')".format(user, cpf, senha)
       mycursor.execute(sqlinsert)
 
       sqlid = "select id from usuarios where cpf = '{}';".format(cpf) # sql para pegar o id do usuário
@@ -94,7 +94,55 @@ def MainUsuario():
       mycursor.close()
       connection.commit()
       connection.close()
-          
+  # Funçao para Editar o cadastro de usuário         
+  def EditarUsuario():
+     connection = pymysql.connect(host="localhost",user="root",password="",database="bdlanchonete")
+     mycursorEdit = connection.cursor()
+
+     iduserEdit = str(Id_entry.get())
+
+     sqlEdit = "select * from usuarios where id = {};".format(iduserEdit)
+     print(sqlEdit)
+     mycursorEdit.execute(sqlEdit)
+     print(mycursorEdit)
+
+     for i in mycursorEdit:
+       print(i)
+
+     Usuario_entry.insert(0,i[1])
+     Cpf_entry.insert(0,i[2])
+     Senha_entry.insert(0,i[3]) 
+
+# Funçao para Alterar o cadastro de usuário 
+  def UpdateUsuario():
+    connection = pymysql.connect(host="localhost",user="root",password="",database="bdlanchonete")
+    mycursor = connection.cursor()
+
+    # abrituindo os valores dos entry a uma variável-----------------
+    user = str(Usuario_entry.get())
+    cpf = str(Cpf_entry.get())
+    senha = str(Senha_entry.get())
+    ide = str(Id_entry.get())
+
+    # Script de Update
+    sqlupdate = "UPDATE usuarios SET  nome='{}', cpf={}, senha={} where id ={}".format(user, cpf, senha,ide)
+    print(sqlupdate)
+    mycursor.execute(sqlupdate)
+
+    
+# Zera os campos
+    Usuario_entry.delete(0,END)
+    Cpf_entry.delete(0,END)
+    Senha_entry.delete(0,END)
+
+    time.sleep(2)
+    messagebox.showinfo(title="Info",message="Usuário alterado com sucesso!")
+    # Texto_label["text"] = "Usuário cadastrado com sucesso!"
+# Fecha a conexão do banco de dados
+    mycursor.close()
+    connection.commit()
+    connection.close()
+
 
     
 
@@ -160,10 +208,13 @@ def MainUsuario():
   user_add = Button(frame1,text="Cadastrar",bg="#C0C0C0", padx=20, pady=2, borderwidth=5,command=CadastrarUsuario)
   user_add.grid(row=4,column=0,rowspan=2,padx=20, pady=20,sticky=W+E)
 
+  salvar_add = Button(frame1,text="Salvar",bg="#C0C0C0", padx=20, pady=2, borderwidth=5,command=UpdateUsuario)
+  salvar_add.grid(row=4,column=1,rowspan=2,padx=20, pady=20,sticky=W+E)
+
   excluiruser = Button(frame3,text="Excluir",bg="#C0C0C0", padx=20, pady=2, borderwidth=5,command=ExcluirUsuario)
   excluiruser.grid(row=3,column=2,rowspan=2,columnspan=4,padx=20,pady=(0,20),sticky=W+E)
 
-  editaruser = Button(frame3,text="Editar", bg="#C0C0C0", padx=20, pady=2, borderwidth=5, command=ViewUser)
+  editaruser = Button(frame3,text="Editar", bg="#C0C0C0", padx=20, pady=2, borderwidth=5, command=EditarUsuario)
   editaruser.grid(row=5,column=2,rowspan=2,columnspan=4,padx=20,pady=(0,20),sticky=W+E)
 
   view_exist = Button(frame2,text="Visualizar Cadastros", bg="#C0C0C0", padx=20, pady=2, borderwidth=5, command=ViewUser)
