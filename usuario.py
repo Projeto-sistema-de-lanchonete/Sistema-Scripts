@@ -5,6 +5,7 @@ from tkinter import messagebox
 from PIL import ImageTk, Image
 import pymysql
 import time
+from EditUsuario import MainEditUsuario
 
 
 def MainUsuario():
@@ -214,7 +215,7 @@ def MainUsuario():
   excluiruser = Button(frame3,text="Excluir",bg="#C0C0C0", padx=20, pady=2, borderwidth=5,command=ExcluirUsuario)
   excluiruser.grid(row=3,column=2,rowspan=2,columnspan=4,padx=20,pady=(0,20),sticky=W+E)
 
-  editaruser = Button(frame3,text="Editar", bg="#C0C0C0", padx=20, pady=2, borderwidth=5, command=EditarUsuario)
+  editaruser = Button(frame3,text="Editar", bg="#C0C0C0", padx=20, pady=2, borderwidth=5, command=MainEditUsuario)
   editaruser.grid(row=5,column=2,rowspan=2,columnspan=4,padx=20,pady=(0,20),sticky=W+E)
 
   view_exist = Button(frame2,text="Visualizar Cadastros", bg="#C0C0C0", padx=20, pady=2, borderwidth=5, command=ViewUser)
