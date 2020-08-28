@@ -3,13 +3,33 @@ from tkinter import messagebox
 from tkinter import *
 from tkinter import ttk
 import mysql.connector
+import pymysql
 import time
 
 def MainProdutos():
+        # Pega o maior valor da coluna cod_produtos para colocar na entry Cod
+    connection = mysql.connector.connect(host="localhost",user="root",password="",database="bdlanchonete")
+    mycursor = connection.cursor()
+    sqlid = "SELECT MAX(cod_produto) FROM produtos"
+    mycursor.execute(sqlid)
+    for i in mycursor:
+        print(i)
+    teste = i
 
+    def VisualisarProddutos():
+         treeviewproduto.delete(*treeviewproduto.get_children()) #limpa a lista
+         connection = mysql.connector.connect(host="localhost",user="root",password="",database="bdlanchonete")
+         mycursor = connection.cursor()   
+         sqlid = "select * from produtos;"# sql para pegar os produto
+         mycursor.execute(sqlid)
+               
+         for viwer in mycursor:
+          treeviewproduto.insert("","end",values=(viwer))
+     
     def CadastrarProdutos():
         connection = mysql.connector.connect(host="localhost",user="root",password="",database="bdlanchonete")
         mycursor = connection.cursor()
+
 
         # abrituindo os valores dos entry a uma variável-----------------
         ean = int(entryean.get())
@@ -28,16 +48,11 @@ def MainProdutos():
                 sqlinsert = "INSERT INTO  produtos (ean_produto, nome_produto, categoria_produto, descricão_produto, pre_venda_produto, pre_custo_produto, estoque) VALUES ('{}','{}','{}','{}','{}','{}','{}')".format(ean, nome, comboboxcat.get(), entrydescrição.get("1.0",END), entryprevenda.get(), entryprecusto.get(), entryestoque.get())
                 mycursor.execute(sqlinsert)
 
-                sqlid = "select cod_produto from produtos where ean_produto like {};".format(ean) # sql para pegar o codigo do produto
-                mycursor.execute(sqlid)
-                valido = mycursor.fetchall()
-                
-                print(mycursor)
-                print(valido)
-                time.sleep(1)
-                treeviewproduto.insert("","end",values=(valido, ean, nome, comboboxcat.get(), entrydescrição.get("1.0",END), entryprevenda.get(), entryprecusto.get(), entryestoque.get())) # colando os dados no treeview
-
+               
+                entrycod["state"] ="normal"
                 entrycod.delete(0,END)
+                entrycod.insert(0,teste[0]+2)
+                entrycod["state"] ="disabled"
                 entryean.delete(0,END)
                 entrynome.delete(0,END)
                 comboboxcat.set("Selecione")
@@ -58,7 +73,93 @@ def MainProdutos():
         # elif nome in i:
                 # messagebox.showwarning("Warning","Produto já cadastrado!\n\nEsse nome já pertence a um produto existente.")
 
+    def ExcluirProdutos():
+            connection = pymysql.connect(host="localhost",user="root",password="",database="bdlanchonete")
+            mycursor = connection.cursor()
+
+            codProd = str(cod_entry.get()) 
+
+            sqldelete = "delete from produtos where cod_produto = {};".format(codProd)
+            mycursor.execute(sqldelete)
+           # print(sqldelete)
+            mycursor.close()
+            connection.commit()
+            connection.close()
+
+            cod_entry.delete(0, END)
+
+            time.sleep(2)
+            messagebox.showinfo("Info","Produto excluido.")
+
+    def EditarProdutos():
+
+        window = gui.Tk()
+        window.title("Lanchonete | Editar Produtos")
+        window.iconbitmap("imagens/ico.lanchonete.ico")
+        window.geometry("750x500") # WxH
+        window.resizable(False,False)
+        window.configure(bg="#DCDCDC")
+
+        #=================notebook========================
+        # mynot  = ttk.Notebook(window, width= 710, height=450) # criando notebook
+        # mynot.pack(pady=65)
+
+        # ------------Frames----------------------------------
+       
+        #=================labels e entrys========================
+        # lblanchonetename = Label(window, text="Sistema Lanchonete", bg="#DCDCDC", fg="#363636", bd=0.01, font="Broadway 35 bold")
+        # lblanchonetename.place(x=100, y=0)
+        #codigo
+        labelcod = gui.Label(window,text="Cód. Produto:",  font="Britannic 10 bold")
+        labelcod.grid(row=0,column=0,sticky=W) # sticky -> para ficar um pouco mais para o oeste
+
         
+        entrycod = gui.Entry(window, width=35, bd=4)# state="disabled")
+        entrycod.grid(row=0, column=1,padx=5,pady=3,ipady=3) # ipady -> para altura do entry | padxe pady -> espaço ao redor
+    
+        #EAN
+        labelean = gui.Label(window,text="EAN/GTIN:",font="Britannic 10 bold")
+        labelean.grid(row=1,column=0,sticky=W)
+
+        entryean = gui.Entry(window, width=35, bd=4)
+        entryean.grid(row=1, column=1,padx=5,pady=3,ipady=3)
+        #nome
+        labelnome = gui.Label(window,text="Nome:",font="Britannic 10 bold")
+        labelnome.grid(row=2,column=0,sticky=W)
+
+        entrynome = gui.Entry(window, width=35, bd=4)
+        entrynome.grid(row=2, column=1,padx=5,pady=3,ipady=3)
+        #categoria
+        labelcat = gui.Label(window,text="Categoria:",font="Britannic 10 bold")
+        labelcat.grid(row=3,column=0,sticky=W)
+
+        comboboxcat = ttk.Combobox(window, width=33, values="Lanches Salgados Doces Bebidas", state="readonly") # adicionando um Combobox
+        comboboxcat.set("Selecione") # o combobox inicia vazio se não for selecionado uma opção para ele iniciar | para fazer isso usa-se o .set
+        comboboxcat.grid(row=3, column=1,padx=5,pady=3,ipady=3)
+        #preço de venda
+        labelprevenda = gui.Label(window,text="Preço de venda:", font="Britannic 10 bold")
+        labelprevenda.grid(row=0,column=2,sticky=W)
+
+        entryprevenda = gui.Entry(window, width=35, bd=4)
+        entryprevenda.grid(row=0, column=3,padx=5,pady=3,ipady=3)
+        #preço de custo
+        labelprecusto = gui.Label(window,text="Preço de custo:", font="Britannic 10 bold")
+        labelprecusto.grid(row=1,column=2,sticky=W)
+
+        entryprecusto = gui.Entry(window, width=35, bd=4)
+        entryprecusto.grid(row=1, column=3,padx=5,pady=3,ipady=3)
+        #estoque
+        labelestoque = gui.Label(window,text="Estoque atual:", font="Britannic 10 bold")
+        labelestoque.grid(row=2,column=2,sticky=W)
+
+        entryestoque = gui.Entry(window, width=35, bd=4)
+        entryestoque.grid(row=2, column=3,padx=5,pady=3,ipady=3)
+        #descrição
+        labeldescrição = gui.Label(window,text="Descrição:", font="Britannic 10 bold")
+        labeldescrição.grid(row=4,column=0,sticky=W)
+
+        entrydescrição = gui.Text(window, width=30, height=5, bd=4)
+        entrydescrição.grid(row=4, column=1,padx=5,pady=3,ipady=3)
 
 
 
@@ -96,8 +197,10 @@ def MainProdutos():
     labelcod = gui.Label(frame1,text="Cód. Produto:", bg="#C0C0C0", font="Britannic 10 bold")
     labelcod.grid(row=0,column=0,sticky=W) # sticky -> para ficar um pouco mais para o oeste
 
-    entrycod = gui.Entry(frame1, width=35, bd=4, state="disabled")
+    entrycod = gui.Entry(frame1, width=35, bd=4)# state="disabled")
     entrycod.grid(row=0, column=1,padx=5,pady=3,ipady=3) # ipady -> para altura do entry | padxe pady -> espaço ao redor
+    entrycod.insert(0,teste[0]+1)
+    entrycod["state"] ="disabled"
     #EAN
     labelean = gui.Label(frame1,text="EAN/GTIN:", bg="#C0C0C0", font="Britannic 10 bold")
     labelean.grid(row=1,column=0,sticky=W)
@@ -151,13 +254,20 @@ def MainProdutos():
     #=================botões==================================
     btcliente = gui.Button(frame1,text="Sair", fg="red", bg="#C0C0C0", padx=20, pady=2, borderwidth=5)
     btcliente.place(x=10,y=300)
+
     btfuncionario = gui.Button(frame1,text="Cadastrar", fg="green", bg="#C0C0C0", padx=20, pady=2, borderwidth=5, command=CadastrarProdutos)
     btfuncionario.place(x=90,y=300)
 
-    excluirprod = Button(frame3,text="Excluir",bg="#C0C0C0", padx=20, pady=2, borderwidth=5)
+    btfuncionarioo = gui.Button(frame2,text="Visualizar", fg="green", bg="#C0C0C0", padx=20, pady=2, borderwidth=5, command=VisualisarProddutos)
+    btfuncionarioo.place(x=90,y=300)
+
+    
+    
+
+    excluirprod = Button(frame3,text="Excluir",bg="#C0C0C0", padx=20, pady=2, borderwidth=5,command=ExcluirProdutos)
     excluirprod.grid(row=3,column=0,rowspan=2,columnspan=4,padx=20,pady=(0,20))
     
-    editarprod = Button(frame3,text="Editar", bg="#C0C0C0", padx=22, pady=2, borderwidth=5)
+    editarprod = Button(frame3,text="Editar", bg="#C0C0C0", padx=22, pady=2, borderwidth=5,command=EditarProdutos)
     editarprod.grid(row=5,column=0,rowspan=2,columnspan=4)
 
     #=================treeview==================================
