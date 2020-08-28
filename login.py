@@ -10,6 +10,7 @@ def MainLogin():
             if messagebox.askyesno("Sair","Deseja realmente sair?"):
                   window.destroy()
 
+      #-------------Função para avaliar login senha----------------
       def ValidarUser():
             user = str(entryuser.get())
             password = str(entrypassword.get())
@@ -17,7 +18,7 @@ def MainLogin():
             connection = mysql.connector.connect(host="localhost",user="root",password="",database="bdlanchonete")
             mycursor = connection.cursor()
 
-            sqlselect = "select * from usuarios where nome like '"+user+"' and senha like '"+password+"' " 
+            sqlselect = "select * from usuarios where nome like '"+user+"' and senha like '"+password+"' "  # like (parecido com)
             print(sqlselect)
             mycursor.execute(sqlselect)
             valido = mycursor.fetchall()
@@ -28,15 +29,10 @@ def MainLogin():
                   messagebox.showwarning("Warning","Usuário ou senha inválida!")
                   # entryuser.delete(0, END)
                   entrypassword.delete(0, END)
-                   
 
-            
             mycursor.close()
             connection.commit()
             connection.close()
-
-            
-
 
       # -------------Opening Window------------------
       window = Tk()
