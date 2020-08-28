@@ -19,7 +19,7 @@ def MainLogin():
             mycursor = connection.cursor()
 
             sqlselect = "select * from usuarios where nome like '"+user+"' and senha like '"+password+"' "  # like (parecido com)
-            print(sqlselect)
+            #print(sqlselect)
             mycursor.execute(sqlselect)
             valido = mycursor.fetchall()
 

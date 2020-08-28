@@ -189,7 +189,7 @@ def MainUsuario():
               sqlid = "select id from usuarios where cpf = '{}';".format(cpf) # sql para pegar o id do usuário
               mycursor.execute(sqlid)
               for ind in mycursor:
-                    print(mycursor)
+                    # print(mycursor)
 
               visualizar.insert("","end",values=(ind, user, cpf)) # colando os dados no treeview
 

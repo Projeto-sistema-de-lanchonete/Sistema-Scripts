@@ -18,8 +18,8 @@ ean_produto int(30),
 nome_produto varchar(100) not null,
 categoria_produto varchar(100) not null,
 descricão_produto varchar(255),
-pre_venda_produto decimal(4,2),
-pre_custo_produto decimal(4,2),
+pre_venda_produto float(4,2),
+pre_custo_produto float(4,2),
 estoque varchar(5)
 );
 
@@ -52,7 +52,7 @@ INSERT INTO `usuarios` (nome, cpf, senha) VALUES
 
 INSERT INTO  produtos (ean_produto, nome_produto, categoria_produto, descricão_produto, pre_venda_produto, pre_custo_produto, estoque) VALUES
 ('8711253001205', 'Hamburgue', 'Lanches', 'Hamburgue carne de sol desfida', '16,00', '16,00', '5'),
-('901234123457', 'Coxinha', 'Salgados', 'Coxinha de Frango', '8,00', '10,00', '10');
+('901234123457', 'Coxinha', 'Salgados', 'Coxinha de Frango', 8, 10, '10');
 
 
 select * from usuarios;  
