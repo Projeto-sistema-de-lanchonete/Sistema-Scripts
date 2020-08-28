@@ -163,4 +163,3 @@ def MainProdutos():
 
     # ------------Loop End----------------------------------
     window.mainloop()
-MainProdutos()
