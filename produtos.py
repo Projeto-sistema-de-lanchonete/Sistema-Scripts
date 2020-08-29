@@ -91,7 +91,46 @@ def MainProdutos():
             time.sleep(2)
             messagebox.showinfo("Info","Produto excluido.")
 
+     
+
     def EditarProdutos():
+        def UpdateProdutos():
+        
+            connection = mysql.connector.connect(host="localhost",user="root",password="",database="bdlanchonete")
+            mycursor = connection.cursor()
+
+
+            entrycod["state"] ="normal"
+            cod = entrycod.get()
+            entrycod["state"] ="disabled"    
+            ean = entryean.get()
+            nome = entrynome.get()
+           
+            prevenda = entryprevenda.get()
+            precusto = entryprecusto.get()
+            estoque = entryestoque.get()
+            
+
+             # Script de Update
+            sqlupdate = "UPDATE produtos SET  ean_produto = {},nome_produto ='{}', categoria_produto='{}', descricão_produto ='{}', pre_venda_produto = {}, pre_custo_produto = {}, estoque = {} where cod_produto ={}".format(ean,nome, comboboxcat.get(),entrydescrição.get("1.0",END),prevenda,precusto,estoque,cod)
+            print(sqlupdate)
+            mycursor.execute(sqlupdate)
+
+            mycursor.close()
+            connection.commit()
+            connection.close()          
+
+
+        connection = pymysql.connect(host="localhost",user="root",password="",database="bdlanchonete")
+        mycursor = connection.cursor()
+
+        codProd = str(cod_entry.get()) 
+
+        sqlPesquisar = "SELECT * FROM produtos where cod_produto= {}".format(codProd)
+        mycursor.execute(sqlPesquisar)
+
+        for produto in mycursor:
+          print(produto)
 
         window = gui.Tk()
         window.title("Lanchonete | Editar Produtos")
@@ -134,7 +173,7 @@ def MainProdutos():
         labelcat.grid(row=3,column=0,sticky=W)
 
         comboboxcat = ttk.Combobox(window, width=33, values="Lanches Salgados Doces Bebidas", state="readonly") # adicionando um Combobox
-        comboboxcat.set("Selecione") # o combobox inicia vazio se não for selecionado uma opção para ele iniciar | para fazer isso usa-se o .set
+        #comboboxcat.set("Selecione") # o combobox inicia vazio se não for selecionado uma opção para ele iniciar | para fazer isso usa-se o .set
         comboboxcat.grid(row=3, column=1,padx=5,pady=3,ipady=3)
         #preço de venda
         labelprevenda = gui.Label(window,text="Preço de venda:", font="Britannic 10 bold")
@@ -160,6 +199,24 @@ def MainProdutos():
 
         entrydescrição = gui.Text(window, width=30, height=5, bd=4)
         entrydescrição.grid(row=4, column=1,padx=5,pady=3,ipady=3)
+
+        btSalvar = gui.Button(window,text="Salvar", fg="green", bg="#C0C0C0", padx=20, pady=2, borderwidth=5, command=UpdateProdutos)
+        btSalvar.grid(row=6)
+
+
+
+        entrycod.insert(0,produto[0])
+        entrycod["state"] ="disabled"
+        entryean.insert(0,produto[1])
+        entrynome.insert(0,produto[2])
+        comboboxcat.set(produto[3])
+        entrydescrição.insert(END,produto[4],'')
+        entryprevenda.insert(0,produto[5])
+        entryprecusto.insert(0,produto[6])
+        entryestoque.insert(0,produto[7])
+    
+
+
 
 
 
