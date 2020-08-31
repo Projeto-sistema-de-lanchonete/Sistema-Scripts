@@ -257,6 +257,8 @@ def MainProdutos():
     entrycod = gui.Entry(frame1, width=35, bd=4)# state="disabled")
     entrycod.grid(row=0, column=1,padx=5,pady=3,ipady=3) # ipady -> para altura do entry | padxe pady -> espaço ao redor
     entrycod.insert(0,teste[0]+1)
+
+    
     entrycod["state"] ="disabled"
     #EAN
     labelean = gui.Label(frame1,text="EAN/GTIN:", bg="#C0C0C0", font="Britannic 10 bold")
