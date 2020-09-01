@@ -135,7 +135,7 @@ def MainProdutos():
         window = gui.Tk()
         window.title("Lanchonete | Editar Produtos")
         window.iconbitmap("imagens/ico.lanchonete.ico")
-        window.geometry("750x500") # WxH
+        window.geometry("770x300") # WxH
         window.resizable(False,False)
         window.configure(bg="#DCDCDC")
 
@@ -197,16 +197,15 @@ def MainProdutos():
         labeldescrição = gui.Label(window,text="Descrição:", font="Britannic 10 bold")
         labeldescrição.grid(row=4,column=0,sticky=W)
 
-        entrydescrição = gui.Text(window, width=30, height=5, bd=4)
+        entrydescrição = gui.Text(window, width=28, height=5, bd=4)
         entrydescrição.grid(row=4, column=1,padx=5,pady=3,ipady=3)
 
         btSalvar = gui.Button(window,text="Salvar", fg="green", bg="#C0C0C0", padx=20, pady=2, borderwidth=5, command=UpdateProdutos)
-        btSalvar.grid(row=6)
+        btSalvar.grid(row=6, column=4,pady=8)
 
-
-
-        entrycod.insert(0,produto[0])
-        entrycod["state"] ="disabled"
+        # entrycod.insert(0,produto[0])
+        entrycod.insert(0, "Automático")
+        entrycod["state"] ="disabled" # desativar o entry
         entryean.insert(0,produto[1])
         entrynome.insert(0,produto[2])
         comboboxcat.set(produto[3])
@@ -254,10 +253,11 @@ def MainProdutos():
     labelcod = gui.Label(frame1,text="Cód. Produto:", bg="#C0C0C0", font="Britannic 10 bold")
     labelcod.grid(row=0,column=0,sticky=W) # sticky -> para ficar um pouco mais para o oeste
 
-    entrycod = gui.Entry(frame1, width=35, bd=4)# state="disabled")
+    entrycod = gui.Entry(frame1, width=35, bd=4)# state="disabled"
     entrycod.grid(row=0, column=1,padx=5,pady=3,ipady=3) # ipady -> para altura do entry | padxe pady -> espaço ao redor
-    entrycod.insert(0,teste[0]+1)
-    entrycod["state"] ="disabled"
+    # entrycod.insert(0,teste[0]+1)
+    entrycod.insert(0, "Automático") # inserindo valor no entry
+    entrycod["state"] ="disabled" # desativar o entry
     #EAN
     labelean = gui.Label(frame1,text="EAN/GTIN:", bg="#C0C0C0", font="Britannic 10 bold")
     labelean.grid(row=1,column=0,sticky=W)
@@ -299,7 +299,7 @@ def MainProdutos():
     labeldescrição = gui.Label(frame1,text="Descrição:", bg="#C0C0C0", font="Britannic 10 bold")
     labeldescrição.grid(row=4,column=0,sticky=W)
 
-    entrydescrição = gui.Text(frame1, width=30, height=5, bd=4)
+    entrydescrição = gui.Text(frame1, width=28, height=5, bd=4)
     entrydescrição.grid(row=4, column=1,padx=5,pady=3,ipady=3)
 
     codexcluir = Label(frame3,text="Cod. do produto:", bg="#C0C0C0", font="Britannic 10 bold")
@@ -309,22 +309,19 @@ def MainProdutos():
     cod_entry.grid(row=2,column=1,ipady=3)
 
     #=================botões==================================
-    btcliente = gui.Button(frame1,text="Sair", fg="red", bg="#C0C0C0", padx=20, pady=2, borderwidth=5)
+    btcliente = gui.Button(frame1,text="Sair", fg="red", bg="#C0C0C0", width= 10, padx=20, pady=2, borderwidth=5)
     btcliente.place(x=10,y=300)
 
-    btfuncionario = gui.Button(frame1,text="Cadastrar", fg="green", bg="#C0C0C0", padx=20, pady=2, borderwidth=5, command=CadastrarProdutos)
-    btfuncionario.place(x=90,y=300)
+    btfuncionario = gui.Button(frame1,text="Cadastrar", fg="green", bg="#C0C0C0", width= 10, padx=20, pady=2, borderwidth=5, command=CadastrarProdutos)
+    btfuncionario.place(x=145,y=300)
 
-    btfuncionarioo = gui.Button(frame2,text="Visualizar", fg="green", bg="#C0C0C0", padx=20, pady=2, borderwidth=5, command=VisualisarProddutos)
+    btfuncionarioo = gui.Button(frame2,text="Visualizar", fg="green", bg="#C0C0C0", width= 10, padx=20, pady=2, borderwidth=5, command=VisualisarProddutos)
     btfuncionarioo.place(x=90,y=300)
 
-    
-    
-
-    excluirprod = Button(frame3,text="Excluir",bg="#C0C0C0", padx=20, pady=2, borderwidth=5,command=ExcluirProdutos)
+    excluirprod = Button(frame3,text="Excluir",bg="#C0C0C0", width= 10, padx=20, pady=2, borderwidth=5,command=ExcluirProdutos)
     excluirprod.grid(row=3,column=0,rowspan=2,columnspan=4,padx=20,pady=(0,20))
     
-    editarprod = Button(frame3,text="Editar", bg="#C0C0C0", padx=22, pady=2, borderwidth=5,command=EditarProdutos)
+    editarprod = Button(frame3,text="Editar", bg="#C0C0C0", width= 10, padx=22, pady=2, borderwidth=5,command=EditarProdutos)
     editarprod.grid(row=5,column=0,rowspan=2,columnspan=4)
 
     #=================treeview==================================

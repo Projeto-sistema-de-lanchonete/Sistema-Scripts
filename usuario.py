@@ -85,6 +85,7 @@ def MainUsuario():
 
       
       def ViewUser():
+            visualizar.delete(*visualizar.get_children()) #limpa o TREEVIEW
             connection = pymysql.connect(host="localhost",user="root",password="",database="bdlanchonete")
             mycursor = connection.cursor()
 
@@ -93,7 +94,7 @@ def MainUsuario():
             for ind in mycursor:
                   # print(mycursor)
                   visualizar.insert("","end",values=(ind))
-            view_exist["state"] = "disabled"   
+            # view_exist["state"] = "disabled"   ""
           
 
 
