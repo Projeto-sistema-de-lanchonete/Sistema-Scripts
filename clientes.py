@@ -62,7 +62,7 @@ def MainClientes():
             Email_entry.delete(0,END)
 
 
-      def  PesquisarCliente():
+      def  PesquisarCliente(): #Pesquisar cliente
     
             connection = mysql.connector.connect(host="localhost",user="root",password="",database="bdlanchonete")
             mycursor = connection.cursor()
@@ -70,9 +70,26 @@ def MainClientes():
             sqlpesquisarcliente = "SELECT cod_cliente, nome_cliente, DATE_FORMAT(datanasc_cliente, '%d/%m/%Y'), cpf_cliente, rg_cliente, end_cliente, nunend_cliente, bairro_cliente, cep_cliente, cidade_cliente, uf_cliente, fone_cliente, celular_cliente, email_cliente FROM  clientes WHERE cod_cliente = {}".format(Pesquisar_entry.get())
             mycursor.execute(sqlpesquisarcliente)
 
+            # Listando o cliente selecionado 
             for cliente in mycursor:
                   print(cliente)
 
+           # Apagar todos os campos
+            Nome_entry.delete(0,END)
+            DataNasc_entry.delete(0,END)
+            CPF_entry.delete(0,END)
+            RG_entry.delete(0,END)
+            End_entry.delete(0,END)
+            EndNun_entry.delete(0,END)
+            Bairro_entry.delete(0,END)
+            Cep_entry.delete(0,END)
+            Cidade_entry.delete(0,END)
+            UF_entry.delete(0,END)
+            Fone_entry.delete(0,END)
+            Cel_entry.delete(0,END)
+
+            # inserindo os dados nos campos
+            Email_entry.delete(0,END)
             Bt_editar["state"] = "normal"
             Bt_excluir["state"] = "normal" 
             Codigo_entry["state"] = "normal"
@@ -94,6 +111,52 @@ def MainClientes():
             Cel_entry.insert(0,cliente[12])
             Email_entry.insert(0,cliente[13])
 
+      def UpdateClientes():
+            connection = mysql.connector.connect(host="localhost",user="root",password="",database="bdlanchonete")
+            mycursor = connection.cursor()
+
+            Codigo_entry["state"] = "normal" # Hablita o campo para poder pegar o dado
+            data = DataNasc_entry.get()
+
+             # Atualizando as informações
+            sqlupdatecliente = "UPDATE clientes SET  nome_cliente = '{}', datanasc_cliente = '{}' , cpf_cliente = '{}', rg_cliente = '{}', end_cliente = '{}', nunend_cliente = '{}', bairro_cliente = '{}', cep_cliente = '{}', cidade_cliente = '{}', uf_cliente = '{}', fone_cliente  = '{}', celular_cliente = '{}', email_cliente  = '{}' WHERE cod_cliente = '{}'".format(Nome_entry.get(),data,CPF_entry.get(),RG_entry.get(),End_entry.get(),EndNun_entry.get(),Bairro_entry.get(),Cep_entry.get(),Cidade_entry.get(),UF_entry.get(),Fone_entry.get(),Cel_entry.get(),Email_entry.get(),Codigo_entry.get())
+            print(sqlupdatecliente)
+            mycursor.execute(sqlupdatecliente)
+
+             # fechando a cominicação
+            mycursor.close()
+            connection.commit()
+            connection.close()
+
+            Codigo_entry.delete(0,END)
+
+            connection = mysql.connector.connect(host="localhost",user="root",password="",database="bdlanchonete")
+            mycursor = connection.cursor()
+            sqlid = "SELECT MAX(cod_cliente) FROM clientes"
+            mycursor.execute(sqlid)
+            for i in mycursor:
+                  print(i)
+            ultimocod = i
+
+            Codigo_entry["state"] = "normal"
+            Codigo_entry.insert(0,ultimocod[0]+1)
+
+            Codigo_entry["state"] = "disabled"
+
+            Nome_entry.delete(0,END)
+            DataNasc_entry.delete(0,END)
+            CPF_entry.delete(0,END)
+            RG_entry.delete(0,END)
+            End_entry.delete(0,END)
+            EndNun_entry.delete(0,END)
+            Bairro_entry.delete(0,END)
+            Cep_entry.delete(0,END)
+            Cidade_entry.delete(0,END)
+            UF_entry.delete(0,END)
+            Fone_entry.delete(0,END)
+            Cel_entry.delete(0,END)
+            Email_entry.delete(0,END)
+            Pesquisar_entry.delete(0,END)
 
 
       # ------------Opening Window----------------------------------
@@ -135,7 +198,7 @@ def MainClientes():
 
       Codigo_entry = gui.Entry(frame1, width =30, bd=4)
       Codigo_entry.grid(row=1,column=1,sticky=W,padx=2,ipady=3)
-      Codigo_entry.insert(0,"Automático")
+      Codigo_entry.insert(0,ultimocod[0]+1)
       Codigo_entry["state"] = "disabled"
 
       Nome_Label = gui.Label(frame1,text="Nome:", bg="#C0C0C0", font="Britannic 10 bold")
@@ -226,7 +289,7 @@ def MainClientes():
       Bt_cadastrar = gui.Button(frame1,text="Cadastrar", width= 10, bg="#C0C0C0", padx=20, pady=2, borderwidth=5,command=CadastrarCliente)
       Bt_cadastrar.place(x=10,y=300)
       
-      Bt_editar = gui.Button(frame1,text="Editar", width= 10, bg="#C0C0C0", padx=20, pady=2, borderwidth=5, state = "disabled")
+      Bt_editar = gui.Button(frame1,text="Editar", width= 10, bg="#C0C0C0", padx=20, pady=2, borderwidth=5, state = "disabled",command=UpdateClientes)
       Bt_editar.place(x=145,y=300)
 
       Bt_excluir = gui.Button(frame1,text="Excluir",width = 10, bg="#C0C0C0", padx=20, pady=2, borderwidth=5, state = "disabled")
