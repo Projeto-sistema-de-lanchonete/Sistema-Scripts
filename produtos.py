@@ -203,8 +203,8 @@ def MainProdutos():
         btSalvar = gui.Button(window,text="Salvar", fg="green", bg="#C0C0C0", padx=20, pady=2, borderwidth=5, command=UpdateProdutos)
         btSalvar.grid(row=6, column=4,pady=8)
 
-        # entrycod.insert(0,produto[0])
-        entrycod.insert(0, "Automático")
+        entrycod.insert(0,produto[0])
+        # entrycod.insert(0, "Automático")
         entrycod["state"] ="disabled" # desativar o entry
         entryean.insert(0,produto[1])
         entrynome.insert(0,produto[2])

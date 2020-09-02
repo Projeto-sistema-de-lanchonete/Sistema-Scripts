@@ -73,7 +73,8 @@ def MainClientes():
             for cliente in mycursor:
                   print(cliente)
 
-
+            Bt_editar["state"] = "normal"
+            Bt_excluir["state"] = "normal" 
             Codigo_entry["state"] = "normal"
             Codigo_entry.delete(0,END)
             Codigo_entry.insert(0,cliente[0])
@@ -116,11 +117,6 @@ def MainClientes():
       frame2 = gui.Frame(mynot,background="#C0C0C0", highlightbackground="#ffffff", highlightthickness=3)
       frame2.place(relwidth=0.99,relheight=0.90,relx=0.01,rely=0.15)
       mynot.add(frame2, text="Visualisar clientes")
-
-      frame3 = gui.Frame(mynot,background="#C0C0C0", highlightbackground="#ffffff", highlightthickness=3)
-      frame3.place(relwidth=0.99,relheight=0.90,relx=0.01,rely=0.15)
-      mynot.add(frame3, text="Excluir/Editar clientes")
-
 
       # ------------Widgets----------------------------------
       #labels e entrys
@@ -226,22 +222,56 @@ def MainClientes():
       #botões
       Btn_Pesquisar = gui.Button(frame1,text="Pesquisar", width= 8, padx=10, bg="#C0C0C0", pady=2, borderwidth=5,command=PesquisarCliente)
       Btn_Pesquisar.grid(row=0,column=2)
+
+      Bt_cadastrar = gui.Button(frame1,text="Cadastrar", width= 10, bg="#C0C0C0", padx=20, pady=2, borderwidth=5,command=CadastrarCliente)
+      Bt_cadastrar.place(x=10,y=300)
       
-      Btn_Salvar = gui.Button(frame1,text="Salvar", width= 10, fg="green", bg="#C0C0C0", padx=20, pady=2, borderwidth=5,command=CadastrarCliente)
-      Btn_Salvar.place(x=145,y=300)
+      Bt_editar = gui.Button(frame1,text="Editar", width= 10, bg="#C0C0C0", padx=20, pady=2, borderwidth=5, state = "disabled")
+      Bt_editar.place(x=145,y=300)
 
-      Btn_Sair = gui.Button(frame1,text="Sair", width= 10, fg="red", bg="#C0C0C0", padx=20, pady=2, borderwidth=5)
-      Btn_Sair.place(x=10,y=300)
+      Bt_excluir = gui.Button(frame1,text="Excluir",width = 10, bg="#C0C0C0", padx=20, pady=2, borderwidth=5, state = "disabled")
+      Bt_excluir.place(x=280,y=300)
 
-      Btn_Editar = gui.Button(frame3,text="Editar",width = 15, bg="#C0C0C0", padx=20, pady=2, borderwidth=5)
-      Btn_Editar.grid(row=4,column=2,sticky=W)
+      Btn_Pesquisar = gui.Button(frame1,text="Sairr",width = 10, bg="#C0C0C0", padx=20, pady=2, borderwidth=5)
+      Btn_Pesquisar.place(x=415,y=300)
 
+      #=================treeview==================================
+      treeviewclientes = ttk.Treeview(frame2,columns=('cod','nome','cpf','rg','dt. nasc','ende','nº','bairro', 'cidade','uf','cep','telefone', 'celular','email'),show='headings')
+      treeviewclientes.column('cod',minwidth=0,width=65)
+      treeviewclientes.column('nome',minwidth=0,width=70)
+      treeviewclientes.column('cpf',minwidth=0,width=75)
+      treeviewclientes.column('rg',minwidth=0,width=65)
+      treeviewclientes.column('dt. nasc',minwidth=0,width=75)
+      treeviewclientes.column('ende',minwidth=0,width=200)
+      treeviewclientes.column('nº',minwidth=0,width=60)
+      treeviewclientes.column('bairro',minwidth=0,width=65)
+      treeviewclientes.column('cidade',minwidth=0,width=65)
+      treeviewclientes.column('uf',minwidth=0,width=75)
+      treeviewclientes.column('cep',minwidth=0,width=65)
+      treeviewclientes.column('telefone',minwidth=0,width=60)
+      treeviewclientes.column('celular',minwidth=0,width=60)
+      treeviewclientes.column('email',minwidth=0,width=60)
 
+      treeviewclientes.heading('cod',text="Cod.")
+      treeviewclientes.heading('nome',text="Nome")
+      treeviewclientes.heading('cpf',text="CPF")
+      treeviewclientes.heading('rg',text="RG")
+      treeviewclientes.heading('dt. nasc',text="Dt. Nasc.")
+      treeviewclientes.heading('ende',text="Endereço")
+      treeviewclientes.heading('nº',text="Nº")
+      treeviewclientes.heading('bairro',text="Bairro")
+      treeviewclientes.heading('cidade',text="Cidade")
+      treeviewclientes.heading('uf',text="UF")
+      treeviewclientes.heading('cep',text="CEP")
+      treeviewclientes.heading('telefone',text="Tel.")
+      treeviewclientes.heading('celular',text="Cel")
+      treeviewclientes.heading('email',text="Email")
+      treeviewclientes.pack()
 
       # ------------Loop End----------------------------------
 
       window.mainloop()
-MainClientes()
+
 
 
 
