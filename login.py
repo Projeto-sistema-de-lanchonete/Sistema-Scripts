@@ -1,3 +1,4 @@
+import tkinter as gui
 from tkinter import *
 from menu import MainMenu
 from tkinter import messagebox
@@ -24,6 +25,7 @@ def MainLogin():
             valido = mycursor.fetchall()
 
             if len(valido) > 0:
+                  window.destroy()
                   btentrar["command"] = MainMenu()
             else:
                   messagebox.showwarning("Warning","Usuário ou senha inválida!")
@@ -35,7 +37,7 @@ def MainLogin():
             connection.close()
 
       # -------------Opening Window------------------
-      window = Tk()
+      window = gui.Tk()
       window.title("Lanchonete | Login")
       window.configure(bg="#DCDCDC") # Gainsboro = #DCDCDC
       window.resizable(False,False)
@@ -43,7 +45,7 @@ def MainLogin():
       window.iconbitmap("imagens/ico.lanchonete.ico")	
 
       #------------Frames-----------------------
-      framelogin = Frame(window, background="#C0C0C0", highlightbackground="#ffffff", highlightthickness=3) # C0C0C0 == Silver
+      framelogin = gui.Frame(window, background="#C0C0C0", highlightbackground="#ffffff", highlightthickness=3) # C0C0C0 == Silver
       framelogin.place(relwidth=0.60,relheight=0.75,relx=0.2,rely=0.15)
       # relwidth = largura do lado direito
       # relheight = altura de baixo
@@ -52,16 +54,16 @@ def MainLogin():
 
       #------------ Widgets----------------------
       #labels
-      lblanchonetename = Label(window, text="Sistema Lanchonete", bg="#DCDCDC", fg="#363636", bd=0.01, font="Broadway 35 bold")
-      lblogin = Label(framelogin, text="Login", font="Britannic 40 bold", bg="#C0C0C0")
-      lbuser = Label(framelogin, text="Usuário:", font="Britannic 15 bold", bg="#C0C0C0")
-      lbpassword = Label(framelogin, text="Senha:", font="Britannic 15 bold", bg="#C0C0C0")
+      lblanchonetename = gui.Label(window, text="Sistema Lanchonete", bg="#DCDCDC", fg="#363636", bd=0.01, font="Broadway 35 bold")
+      lblogin = gui.Label(framelogin, text="Login", font="Britannic 40 bold", bg="#C0C0C0")
+      lbuser = gui.Label(framelogin, text="Usuário:", font="Britannic 15 bold", bg="#C0C0C0")
+      lbpassword = gui.Label(framelogin, text="Senha:", font="Britannic 15 bold", bg="#C0C0C0")
       #entrys
-      entryuser = Entry(framelogin, width=32, borderwidth=5)
-      entrypassword = Entry(framelogin, width=32, borderwidth=5,show="*")
+      entryuser = gui.Entry(framelogin, width=32, borderwidth=5)
+      entrypassword = gui.Entry(framelogin, width=32, borderwidth=5,show="*")
       #botões
-      btentrar = Button(framelogin, text="Entrar", padx=60, pady=5, command=ValidarUser, borderwidth=5, bg="#C0C0C0", font="Britannic 9 bold")
-      btexit = Button(framelogin, text="Sair", fg="red", padx=20, pady=5, command=ExitWindow,borderwidth=5, bg="#C0C0C0", font="Britannic 9 bold")
+      btentrar = gui.Button(framelogin, text="Entrar", padx=60, pady=5, command=ValidarUser, borderwidth=5, bg="#C0C0C0", font="Britannic 9 bold")
+      btexit = gui.Button(framelogin, text="Sair", fg="red", padx=20, pady=5, command=ExitWindow,borderwidth=5, bg="#C0C0C0", font="Britannic 9 bold")
 
       #---------------Layout widgets------------------------
       lblanchonetename.place(x=115,y=0)
@@ -75,7 +77,7 @@ def MainLogin():
 
       #-------------Image----------------------------
       img = PhotoImage(file= "imagens/login4.png")
-      lbimage = Label(framelogin, image= img, bg="#C0C0C0")
+      lbimage = gui.Label(framelogin, image= img, bg="#C0C0C0")
       lbimage.place(x=10,y=85)
       entryuser.focus()
 

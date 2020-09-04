@@ -26,7 +26,8 @@ def MainClientes():
             Codigo_entry["state"] = "normal"
             data = DataNasc_entry.get()
 
-            sqlcliente ="INSERT INTO clientes (cod_cliente, nome_cliente, datanasc_cliente , cpf_cliente, rg_cliente, end_cliente, nunend_cliente, bairro_cliente, cep_cliente, cidade_cliente, uf_cliente, fone_cliente, celular_cliente, email_cliente) VALUES ('{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}')".format(Codigo_entry.get(),Nome_entry.get(),data,CPF_entry.get(),RG_entry.get(),End_entry.get(),EndNun_entry.get(),Bairro_entry.get(),Cep_entry.get(),Cidade_entry.get(),UF_entry.get(),Fone_entry.get(),Cel_entry.get(),Email_entry.get())
+            sqlcliente ="INSERT INTO  clientes (cod_cliente,nome_cliente, datanasc_cliente , cpf_cliente, rg_cliente, end_cliente, nunend_cliente, bairro_cliente, cep_cliente, cidade_cliente, uf_cliente, fone_cliente, celular_cliente, email_cliente) VALUES ('{}','{}',DATE_FORMAT(STR_TO_DATE('{}', '%d/%m/%Y'), '%Y-%m-%d'),'{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}')".format(Codigo_entry.get(),Nome_entry.get(),data,CPF_entry.get(),RG_entry.get(),End_entry.get(),EndNun_entry.get(),Bairro_entry.get(),Cep_entry.get(),Cidade_entry.get(),UF_entry.get(),Fone_entry.get(),Cel_entry.get(),Email_entry.get())
+            print(sqlcliente)
             mycursor.execute(sqlcliente)
 
             mycursor.close()
@@ -111,6 +112,10 @@ def MainClientes():
             Cel_entry.insert(0,cliente[12])
             Email_entry.insert(0,cliente[13])
 
+            Bt_cadastrar["state"] =  "disabled"
+
+
+
       def UpdateClientes():
             connection = mysql.connector.connect(host="localhost",user="root",password="",database="bdlanchonete")
             mycursor = connection.cursor()
@@ -119,7 +124,7 @@ def MainClientes():
             data = DataNasc_entry.get()
 
              # Atualizando as informações
-            sqlupdatecliente = "UPDATE clientes SET  nome_cliente = '{}', datanasc_cliente = '{}' , cpf_cliente = '{}', rg_cliente = '{}', end_cliente = '{}', nunend_cliente = '{}', bairro_cliente = '{}', cep_cliente = '{}', cidade_cliente = '{}', uf_cliente = '{}', fone_cliente  = '{}', celular_cliente = '{}', email_cliente  = '{}' WHERE cod_cliente = '{}'".format(Nome_entry.get(),data,CPF_entry.get(),RG_entry.get(),End_entry.get(),EndNun_entry.get(),Bairro_entry.get(),Cep_entry.get(),Cidade_entry.get(),UF_entry.get(),Fone_entry.get(),Cel_entry.get(),Email_entry.get(),Codigo_entry.get())
+            sqlupdatecliente = "UPDATE clientes SET  nome_cliente = '{}', datanasc_cliente = DATE_FORMAT(STR_TO_DATE('{}', '%d/%m/%Y'), '%Y-%m-%d') , cpf_cliente = '{}', rg_cliente = '{}', end_cliente = '{}', nunend_cliente = '{}', bairro_cliente = '{}', cep_cliente = '{}', cidade_cliente = '{}', uf_cliente = '{}', fone_cliente  = '{}', celular_cliente = '{}', email_cliente  = '{}' WHERE cod_cliente = '{}'".format(Nome_entry.get(),data,CPF_entry.get(),RG_entry.get(),End_entry.get(),EndNun_entry.get(),Bairro_entry.get(),Cep_entry.get(),Cidade_entry.get(),UF_entry.get(),Fone_entry.get(),Cel_entry.get(),Email_entry.get(),Codigo_entry.get())
             print(sqlupdatecliente)
             mycursor.execute(sqlupdatecliente)
 
@@ -157,6 +162,87 @@ def MainClientes():
             Cel_entry.delete(0,END)
             Email_entry.delete(0,END)
             Pesquisar_entry.delete(0,END)
+
+            Bt_cadastrar["state"] =  "normal"
+            Bt_editar["state"] = "disabled"
+            Bt_excluir["state"] = "disabled"
+
+      def ExcluirClientes():
+            connection = mysql.connector.connect(host="localhost",user="root",password="",database="bdlanchonete")
+            mycursor = connection.cursor()
+            
+            Codigo_entry["state"] = "normal" # Hablita o campo para poder pegar o dado
+            sqlexcluircliente =  "delete from clientes where cod_cliente = {};".format( Codigo_entry.get())
+            print(sqlexcluircliente)
+            mycursor.execute(sqlexcluircliente)
+
+            # fechando a cominicação
+            mycursor.close()
+            connection.commit()
+            connection.close()
+
+            Codigo_entry.delete(0, END)
+
+            Codigo_entry["state"] = "disabled" # Hablita o campo para poder pegar o dado
+
+            time.sleep(2)
+            messagebox.showinfo("Info","Cliente excluido.")
+
+            Nome_entry.delete(0,END)
+            DataNasc_entry.delete(0,END)
+            CPF_entry.delete(0,END)
+            RG_entry.delete(0,END)
+            End_entry.delete(0,END)
+            EndNun_entry.delete(0,END)
+            Bairro_entry.delete(0,END)
+            Cep_entry.delete(0,END)
+            Cidade_entry.delete(0,END)
+            UF_entry.delete(0,END)
+            Fone_entry.delete(0,END)
+            Cel_entry.delete(0,END)
+            Email_entry.delete(0,END)
+            Pesquisar_entry.delete(0,END)
+
+            #Consulta o ultimo codigo
+            connection = mysql.connector.connect(host="localhost",user="root",password="",database="bdlanchonete")
+            mycursor = connection.cursor()
+            sqlid = "SELECT MAX(cod_cliente) FROM clientes"
+            mycursor.execute(sqlid)
+            for i in mycursor:
+                  print(i)
+            ultimocod = i
+
+            Codigo_entry["state"] = "normal"
+            Codigo_entry.insert(0,ultimocod[0]+1)
+
+            Codigo_entry["state"] = "disabled"
+
+            Bt_cadastrar["state"] =  "normal"
+            Bt_editar["state"] = "disabled"
+            Bt_excluir["state"] = "disabled"
+
+      def VisualisarClientes():
+            treeviewclientes.delete(*treeviewclientes.get_children()) #limpa a lista
+            #Conexão com Banco de Dados
+            connection = mysql.connector.connect(host="localhost",user="root",password="",database="bdlanchonete")
+            mycursor = connection.cursor()
+
+            sqlid = "select * from produtos;"# sql para pegar os produto
+            mycursor.execute(sqlid)
+               
+            for viwer in mycursor:
+              treeviewclientes.insert("","end",values=(viwer))
+              print(viwer)
+
+      def quit_window():
+      
+         window.destroy()
+
+
+
+
+
+
 
 
       # ------------Opening Window----------------------------------
@@ -292,14 +378,19 @@ def MainClientes():
       Bt_editar = gui.Button(frame1,text="Editar", width= 10, bg="#C0C0C0", padx=20, pady=2, borderwidth=5, state = "disabled",command=UpdateClientes)
       Bt_editar.place(x=145,y=300)
 
-      Bt_excluir = gui.Button(frame1,text="Excluir",width = 10, bg="#C0C0C0", padx=20, pady=2, borderwidth=5, state = "disabled")
+      Bt_excluir = gui.Button(frame1,text="Excluir",width = 10, bg="#C0C0C0", padx=20, pady=2, borderwidth=5, state = "disabled",command = ExcluirClientes)
       Bt_excluir.place(x=280,y=300)
 
-      Btn_Pesquisar = gui.Button(frame1,text="Sairr",width = 10, bg="#C0C0C0", padx=20, pady=2, borderwidth=5)
+      Btn_Pesquisar = gui.Button(frame1,text="Sairr",width = 10, bg="#C0C0C0", padx=20, pady=2, borderwidth=5,command=quit_window)
       Btn_Pesquisar.place(x=415,y=300)
+
+      btfuncionarioo = gui.Button(frame2,text="Visualizar", fg="green", bg="#C0C0C0", width= 10, padx=20, pady=2, borderwidth=5, command=VisualisarClientes)
+      btfuncionarioo.place(x=90,y=300)
 
       #=================treeview==================================
       treeviewclientes = ttk.Treeview(frame2,columns=('cod','nome','cpf','rg','dt. nasc','ende','nº','bairro', 'cidade','uf','cep','telefone', 'celular','email'),show='headings')
+    
+      
       treeviewclientes.column('cod',minwidth=0,width=65)
       treeviewclientes.column('nome',minwidth=0,width=70)
       treeviewclientes.column('cpf',minwidth=0,width=75)
@@ -329,7 +420,19 @@ def MainClientes():
       treeviewclientes.heading('telefone',text="Tel.")
       treeviewclientes.heading('celular',text="Cel")
       treeviewclientes.heading('email',text="Email")
-      treeviewclientes.pack()
+      treeviewclientes.place(relx=0.01,rely=0.1,relwidth=0.94,relheight=0.70)
+
+      # ScrollBar Vertical
+      scrollbarv = Scrollbar(frame2,orient='vertical',command=treeviewclientes.yview)
+      treeviewclientes.configure(yscroll=scrollbarv.set)
+      scrollbarv.place(relx=0.95,rely=0.1,relwidth=0.02,relheight=0.70)
+
+       # ScrollBar  Horizontal
+      scrollbarh = Scrollbar(frame2,orient='horizontal',command=treeviewclientes.xview)
+      treeviewclientes.configure(xscroll=scrollbarh.set)
+      scrollbarh.place(relx=0.01,rely=0.80,relwidth=0.94,relheight=0.05)
+
+
 
       # ------------Loop End----------------------------------
 
