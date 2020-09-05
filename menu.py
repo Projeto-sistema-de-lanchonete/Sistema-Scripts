@@ -2,8 +2,9 @@ from tkinter import *
 from produtos import MainProdutos
 from clientes import MainClientes
 from usuario import MainUsuario
-from pedidos import MainPedidos
+from vendas import MainVendas
 from tkinter import messagebox
+# from login import MainLogin
 from PIL import ImageTk, Image
 
 
@@ -14,72 +15,84 @@ def MainMenu():
     # ------------Opening Window----------------------------------
     window = Tk()
     window.title("Lanchonete | Menu")
-    # window.iconbitmap("egg.ico")
     window.geometry("750x500") # WxH
-    #window.configure(bg="#4F4F4F")
+    window.configure(bg="#DCDCDC")
     window.iconbitmap("imagens/ico.lanchonete.ico")
     
 
     def quit_window():
       if messagebox.askokcancel("Sair","Deseja realmente sair?"):
          window.destroy()
-
-    # ------------Widgets----------------------------------
-    lblanchonetename = Label(window, text="Sistema Lanchonete", bg="#DCDCDC", fg="#363636", bd=0.01, font="Broadway 35 bold")
-    lblanchonetename.place(x=145,y=0)
-
-    framelogin = Frame(window, background="#C0C0C0", highlightbackground="#ffffff", highlightthickness=3) # C0C0C0 == Silver
-    framelogin.place(relwidth=0.60,relheight=0.75,relx=0.2,rely=0.15)
-
-    # img = ImageTk.PhotoImage(Image.open("logo.png"))
-    # panel = Label(window,image = img)
-    # panel.grid(row =1,column =0)
-
-   
     
+    # def Logoff(): # função para deslogar
+    #     logoff = messagebox.askokcancel("Logoff","Deseja realmete deslogar desse usuário?")
+    #     if logoff == 1:
+    #         window.destroy()
+    #         MainLogin()
+    #     else:
+    #         pass
+
+    # ------------imagem----------------------------------
+    img = ImageTk.PhotoImage(Image.open("imagens/img_menu.jpg"))
+    panel = Label(image = img)
+    panel.grid(row=0,column=0)
+    # ------------Widgets----------------------------------
+    lblanchonetename = Label(window, text="Sistema Lanchonete",bg="black", fg="white", bd=10, font="Broadway 35 bold")
+    lblanchonetename.place(x=100,y=5)
+
+    # framelogin = Frame(window, background="#C0C0C0", highlightbackground="#ffffff", highlightthickness=3) # C0C0C0 == Silver
+    # framelogin.place(relwidth=0.60,relheight=0.75,relx=0.2,rely=0.15)
+
     #botões
-   
+    imgpro = PhotoImage(file="Imagens/ico.produtos.png")
+    imgcli = PhotoImage(file="Imagens/ico.cliente.png")
+    imgusu = PhotoImage(file="Imagens/ico.usuario.png")
+    imgven = PhotoImage(file="Imagens/ico.vendas.png")
+    imgrela = PhotoImage(file="Imagens/ico.relatorio.png")
+    
+    btprodutos = Button(window,text="Produtos",image = imgpro, bg="#DCDCDC", width= 120, height=60, padx=20, pady=10, borderwidth=4, command=MainProdutos)
+    btprodutos.place(x=10,y=80)
 
+    btclientes = Button(window,text="Clientes",image= imgcli, bg="#DCDCDC", width= 120, height=60, padx=20, pady=10, borderwidth=4, command=MainClientes)
+    btclientes.place(x=10,y=150)
 
+    btusuario = Button(window,text="Usuários",image= imgusu, bg="#DCDCDC", width= 120, height=60, padx=20, pady=10, borderwidth=4, command=MainUsuario)
+    btusuario.place(x=10,y=220)
 
+    btvendas = Button(window,text="Vendas",image = imgven, bg="#DCDCDC", width= 120, height=60, padx=20, pady=10, borderwidth=4, command=MainVendas)
+    btvendas.place(x=10,y=290)
+
+    btvendas = Button(window,text="Relatórios", image = imgrela, bg="#DCDCDC", width= 120, height=60, padx=20, pady=10, borderwidth=4)
+    btvendas.place(x=10,y=360)
+
+    #menu
     menu_bar = Menu(window)
-    menu_bar.add_separator()
 
-    file_menu = Menu(menu_bar,tearoff=0)
-    file_menu.add_command(label="Clientes",command=MainClientes)
-    file_menu.add_separator()
-    file_menu.add_command(label="Usuarios",command=MainUsuario)
-    file_menu.add_separator()
-    file_menu.add_command(label="Produtos",command=MainProdutos)
-    file_menu.add_separator()    
-    file_menu.add_command(label="Sair",command=quit_window)
-    menu_bar.add_cascade(label="Cadastrar",menu=file_menu)
+    arquivo = Menu(menu_bar,tearoff=0)
+    menu_bar.add_cascade(label="Arquivo",menu=arquivo)
+    arquivo.add_command(label="Imprimir")
+    arquivo.add_separator()
+    arquivo.add_command(label="Logoff")
+    arquivo.add_separator()   
+    arquivo.add_command(label="Sair",command=quit_window)
 
-    menu_bar.add_separator()
+    exibir = Menu(menu_bar,tearoff=0)
+    menu_bar.add_cascade(label="Exibir",menu=exibir)
+    exibir.add_command(label="Vendas",command=MainVendas)
+    exibir.add_separator()
+    exibir.add_command(label="Clientes",command=MainClientes)
+    exibir.add_separator()   
+    exibir.add_command(label="Usuários",command=MainUsuario)
 
-
-
-    relatorio_menu = Menu(menu_bar,tearoff=0)
-    relatorio_menu.add_command(label="Clientes")
-    relatorio_menu.add_separator()
-    relatorio_menu.add_command(label="Usuário")
-    relatorio_menu.add_separator()
-    relatorio_menu.add_command(label="Produtos")
-    menu_bar.add_cascade(label="Relatórios",menu=relatorio_menu)
-
-    menu_bar.add_separator()
-
-
-
-    pedidos_menu = Menu(menu_bar,tearoff=0)
-    pedidos_menu.add_command(label="Novo",command=MainPedidos)
-    pedidos_menu.add_separator()
-    menu_bar.add_cascade(label="Pedidos",menu=pedidos_menu)
+    exibir = Menu(menu_bar,tearoff=0)
+    menu_bar.add_cascade(label="Ajuda",menu=exibir)
+    exibir.add_command(label="Tutorial")
+    exibir.add_separator()
+    exibir.add_command(label="Suporte técnico")
+    exibir.add_separator()   
+    exibir.add_command(label="Telefone e informações de contato")
 
     window.configure(menu=menu_bar)
-    window.mainloop()
-
-
 
     # ------------Loop End----------------------------------
     window.mainloop()

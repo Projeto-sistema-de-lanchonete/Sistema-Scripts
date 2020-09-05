@@ -2,7 +2,7 @@ import tkinter as gui
 from tkinter import *
 from tkinter import ttk
 from tkinter import messagebox
-from PIL import ImageTk, Image
+from PIL import ImageTk, Image # pip install Pillow
 import mysql.connector
 import time
 import datetime
@@ -227,7 +227,7 @@ def MainClientes():
             connection = mysql.connector.connect(host="localhost",user="root",password="",database="bdlanchonete")
             mycursor = connection.cursor()
 
-            sqlid = "select * from produtos;"# sql para pegar os produto
+            sqlid = "select * from clientes;"# sql para pegar os produto
             mycursor.execute(sqlid)
                
             for viwer in mycursor:
@@ -388,35 +388,35 @@ def MainClientes():
       btfuncionarioo.place(x=90,y=300)
 
       #=================treeview==================================
-      treeviewclientes = ttk.Treeview(frame2,columns=('cod','nome','cpf','rg','dt. nasc','ende','nº','bairro', 'cidade','uf','cep','telefone', 'celular','email'),show='headings')
+      treeviewclientes = ttk.Treeview(frame2,columns=('cod','nome','dt. nasc','cpf','rg','ende','nº','bairro', 'cep','cidade','uf','telefone', 'celular','email'),show='headings')
     
       
       treeviewclientes.column('cod',minwidth=0,width=65)
       treeviewclientes.column('nome',minwidth=0,width=70)
+      treeviewclientes.column('dt. nasc',minwidth=0,width=75)
       treeviewclientes.column('cpf',minwidth=0,width=75)
       treeviewclientes.column('rg',minwidth=0,width=65)
-      treeviewclientes.column('dt. nasc',minwidth=0,width=75)
       treeviewclientes.column('ende',minwidth=0,width=200)
       treeviewclientes.column('nº',minwidth=0,width=60)
       treeviewclientes.column('bairro',minwidth=0,width=65)
+      treeviewclientes.column('cep',minwidth=0,width=65)
       treeviewclientes.column('cidade',minwidth=0,width=65)
       treeviewclientes.column('uf',minwidth=0,width=75)
-      treeviewclientes.column('cep',minwidth=0,width=65)
       treeviewclientes.column('telefone',minwidth=0,width=60)
       treeviewclientes.column('celular',minwidth=0,width=60)
-      treeviewclientes.column('email',minwidth=0,width=60)
+      treeviewclientes.column('email',minwidth=0,width=200)
 
       treeviewclientes.heading('cod',text="Cod.")
       treeviewclientes.heading('nome',text="Nome")
+      treeviewclientes.heading('dt. nasc',text="Dt. Nasc.")
       treeviewclientes.heading('cpf',text="CPF")
       treeviewclientes.heading('rg',text="RG")
-      treeviewclientes.heading('dt. nasc',text="Dt. Nasc.")
       treeviewclientes.heading('ende',text="Endereço")
       treeviewclientes.heading('nº',text="Nº")
       treeviewclientes.heading('bairro',text="Bairro")
+      treeviewclientes.heading('cep',text="CEP")
       treeviewclientes.heading('cidade',text="Cidade")
       treeviewclientes.heading('uf',text="UF")
-      treeviewclientes.heading('cep',text="CEP")
       treeviewclientes.heading('telefone',text="Tel.")
       treeviewclientes.heading('celular',text="Cel")
       treeviewclientes.heading('email',text="Email")
@@ -437,8 +437,4 @@ def MainClientes():
       # ------------Loop End----------------------------------
 
       window.mainloop()
-
-
-
-
-     
+ 

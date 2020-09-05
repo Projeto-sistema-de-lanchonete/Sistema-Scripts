@@ -2,8 +2,8 @@ import tkinter as gui
 from tkinter import messagebox
 from tkinter import *
 from tkinter import ttk
-import mysql.connector
-import pymysql
+import mysql.connector # pip install mysql-connector
+import pymysql # pip install pymysql
 import time
 
 def MainProdutos():

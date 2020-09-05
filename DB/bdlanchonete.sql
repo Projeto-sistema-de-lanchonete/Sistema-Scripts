@@ -25,7 +25,7 @@ CREATE TABLE `clientes` (
   `celular_cliente` varchar(12) NOT NULL,
   `email_cliente` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
+select * from clientes;
 --
 -- Extraindo dados da tabela `clientes`
 --
@@ -96,8 +96,11 @@ CREATE TABLE `usuarios` (
 -- Extraindo dados da tabela `usuarios`
 --
 
-INSERT INTO `usuarios` (`id`, `nome`, `cpf`, `senha`) VALUES
-(1000, 'itamar', '8919673462', '1234');
+INSERT INTO `usuarios` (`nome`, `cpf`, `senha`) VALUES
+('itamar', '8919673462', '1234'),
+('eduarda', '0113546882', '54321');
+
+
 
 --
 -- Índices para tabelas despejadas
@@ -135,9 +138,5 @@ ALTER TABLE `produtos`
 -- AUTO_INCREMENT de tabela `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id` int(4) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1003;
+  MODIFY `id` int(4) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1000;
 COMMIT;
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
