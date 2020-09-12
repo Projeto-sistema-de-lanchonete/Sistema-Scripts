@@ -227,7 +227,7 @@ def MainClientes():
             connection = mysql.connector.connect(host="localhost",user="root",password="",database="bdlanchonete")
             mycursor = connection.cursor()
 
-            sqlid = "select * from clientes;"# sql para pegar os produto
+            sqlid = "select * from clientes;"# sql para pegar os clientes
             mycursor.execute(sqlid)
                
             for viwer in mycursor:
