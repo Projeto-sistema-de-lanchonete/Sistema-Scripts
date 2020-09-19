@@ -7,7 +7,15 @@ import mysql.connector # pip install mysql-connector
 import pymysql # pip install pymysq
 
 
+
 def MainVendas():
+
+      Pedidos_window = Toplevel()
+      Pedidos_window.title("Lanchonete | Vendas")
+      Pedidos_window.resizable(True,True) 
+      #Pedidos_window.geometry("750x500")                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          /;//  ") 
+      Pedidos_window.iconbitmap("imagens/ico.lanchonete.ico")
+      Pedidos_window.configure(bg="#DCDCDC")
             
       def Ultimocodigo(): # Pega o maior valor da coluna cod_pedido para colocar na entry Cod           
 
@@ -25,14 +33,6 @@ def MainVendas():
             CodPedido_entry.insert(0,ultimocod[0]+1)
             CodPedido_entry["state"] = "disabled"
      
-
-      Pedidos_window = Toplevel()
-      Pedidos_window.title("Lanchonete | Vendas")
-      Pedidos_window.resizable(False,False) 
-      Pedidos_window.geometry("700x400") 
-      Pedidos_window.iconbitmap("imagens/ico.lanchonete.ico")
-      Pedidos_window.configure(bg="#DCDCDC")
-
       def tecla(e): # Função para quando apertar enter no teclado fazer o calculo
 
             VlTotal_entry.delete(0,END) # Apagando o valor ja existente
@@ -139,44 +139,318 @@ def MainVendas():
             
            total_pedido_entry.delete(0,END)
            total_pedido_entry.insert(0,moeda(1,total))     
-      def fechar_pedido(): # Função Para fecar o pedido
+      def fechar_pedido(): # Função Para fechar o pedido , colocando no campo pedido_fechado= "S"
             # salvando os dados do pedido
-            connection = pymysql.connect(host="localhost",user="root",password="",database="bdlanchonete")
+            connection = mysql.connector.connect(host="localhost",user="root",password="",database="bdlanchonete")
             mycursor = connection.cursor()
 
-            CodPedido_entry["state"] = "normal"            
-            sqlVenda = "INSERT  INTO vendas(cod_pedido,cod_operador,id_clientes,vl_total) VALUES('{}','{}','{}','{}')".format(CodPedido_entry.get(),CodOperador_entry.get(),"teste",total_pedido_entry.get())
-            mycursor.execute(sqlVenda)         
+            CodPedido_entry["state"] = "normal"
+            sqlselect = "SELECT cod_pedido  FROM  vendas where  cod_pedido = '{}' ".format(CodPedido_entry.get())  # like (parecido com)
+           
+            mycursor.execute(sqlselect)
+            valido = mycursor.fetchall()
 
-            mycursor.close()
-            connection.commit()
-            connection.close()
+            if len(valido) > 0:
+                  print("tem pedido")
+                  connection = pymysql.connect(host="localhost",user="root",password="",database="bdlanchonete")
+                  mycursor= connection.cursor()
+                  
+                  CodPedido_entry["state"] = "normal"
+                  sqldeleteItens = "DELETE FROM itens_venda where id_venda = {};".format(CodPedido_entry.get())
+                  mycursor.execute(sqldeleteItens)
+                  connection.commit()            
+
+                  CodPedido_entry["state"] = "normal"
+                  sqldeleteVenda = "DELETE  FROM vendas where cod_pedido = {};".format(CodPedido_entry.get())
+                  mycursor.execute(sqldeleteVenda)
+      
+                  mycursor.close()
+                  connection.commit()
+                  connection.close()
+
+                  # salvando os dados do pedido
+                  connection = pymysql.connect(host="localhost",user="root",password="",database="bdlanchonete")
+                  mycursor = connection.cursor()
+
+                  CodPedido_entry["state"] = "normal"            
+                  sqlVenda = "INSERT  INTO vendas(cod_pedido,cod_operador,id_clientes,vl_total,pedido_fechado) VALUES('{}','{}','{}','{}','{}')".format(CodPedido_entry.get(),CodOperador_entry.get(),"teste",total_pedido_entry.get(),"S")
+                  mycursor.execute(sqlVenda)         
+
+                  mycursor.close()
+                  connection.commit()
+                  connection.close()
+                  
+                  children =   ShowItens_tv.get_children()
+                  #percorrendo tods os itens e pegado so o valor total do item
+                  for i in children:
+                        info = ShowItens_tv.item(i,"values")
+                        cod = info[0]
+                        desc = info[1]
+                        un = info[2]
+                        qtd = info[3]
+                        vlunit = info[4]
+                        total_item = info[5]
+
+                        connection = pymysql.connect(host="localhost",user="root",password="",database="bdlanchonete")
+                        mycursor = connection.cursor()
+                        sqlItens = "INSERT  INTO itens_venda(id_venda, cod_prod_venda, prod_des_venda,un_venda, qtd_venda, vl_init_venda, vl_total_venda) VALUES('{}','{}','{}','{}','{}','{}','{}')".format(CodPedido_entry.get(),cod,desc,un,qtd,vlunit,total_item)
+                        mycursor.execute(sqlItens)
+                        mycursor.close()
+                        connection.commit()
+                        connection.close()
+                  BaixaEstoque()
+
+
+                  ShowItens_tv.delete(*ShowItens_tv.get_children()) #limpa a lista
+                  total_pedido_entry.delete(0,END)
+                  total_pedido_entry.insert(0,"0,00")
+                  CodPedido_entry["state"] = "disabled"
+                  Ultimocodigo()
+            else:
+                  print("Não tem pedido")
+                  # salvando os dados do pedido
+                  connection = pymysql.connect(host="localhost",user="root",password="",database="bdlanchonete")
+                  mycursor = connection.cursor()
+
+                  CodPedido_entry["state"] = "normal"            
+                  sqlVenda = "INSERT  INTO vendas(cod_pedido,cod_operador,id_clientes,vl_total,pedido_fechado) VALUES('{}','{}','{}','{}','{}')".format(CodPedido_entry.get(),CodOperador_entry.get(),"teste",total_pedido_entry.get(),"N")
+                  mycursor.execute(sqlVenda)         
+
+                  mycursor.close()
+                  connection.commit()
+                  connection.close()
+                  
+                  children =   ShowItens_tv.get_children()
+                  #percorrendo tods os itens e pegado so o valor total do item
+                  for i in children:
+                        info = ShowItens_tv.item(i,"values")
+                        cod = info[0]
+                        desc = info[1]
+                        un = info[2]
+                        qtd = info[3]
+                        vlunit = info[4]
+                        total_item = info[5]
+
+                        connection = pymysql.connect(host="localhost",user="root",password="",database="bdlanchonete")
+                        mycursor = connection.cursor()
+                        sqlItens = "INSERT  INTO itens_venda(id_venda, cod_prod_venda, prod_des_venda,un_venda, qtd_venda, vl_init_venda, vl_total_venda) VALUES('{}','{}','{}','{}','{}','{}','{}')".format(CodPedido_entry.get(),cod,desc,un,qtd,vlunit,total_item)
+                        mycursor.execute(sqlItens)
+                        mycursor.close()
+                        connection.commit()
+                        connection.close()
+                  BaixaEstoque()
+
+
+                  ShowItens_tv.delete(*ShowItens_tv.get_children()) #limpa a lista
+                  total_pedido_entry.delete(0,END)
+                  total_pedido_entry.insert(0,"0,00")
+                  CodPedido_entry["state"] = "disabled"
+                  Ultimocodigo()
+
+      def SalvarPedido(): # Função Para Salva  o pedido, colocando no campo pedido_fechado= "N"
+
+            connection = mysql.connector.connect(host="localhost",user="root",password="",database="bdlanchonete")
+            mycursor = connection.cursor()
+
+            CodPedido_entry["state"] = "normal"
+            sqlselect = "SELECT cod_pedido  FROM  vendas where  cod_pedido = '{}' ".format(CodPedido_entry.get())  # like (parecido com)
+           
+            mycursor.execute(sqlselect)
+            valido = mycursor.fetchall()
+
+            if len(valido) > 0:
+                  print("tem pedido")
+                  connection = pymysql.connect(host="localhost",user="root",password="",database="bdlanchonete")
+                  mycursor= connection.cursor()
+                  
+                  CodPedido_entry["state"] = "normal"
+                  sqldeleteItens = "DELETE FROM itens_venda where id_venda = {};".format(CodPedido_entry.get())
+                  mycursor.execute(sqldeleteItens)
+                  connection.commit()            
+
+                  CodPedido_entry["state"] = "normal"
+                  sqldeleteVenda = "DELETE  FROM vendas where cod_pedido = {};".format(CodPedido_entry.get())
+                  mycursor.execute(sqldeleteVenda)
+      
+                  mycursor.close()
+                  connection.commit()
+                  connection.close()
+
+
+
+
+                  # salvando os dados do pedido
+                  connection = pymysql.connect(host="localhost",user="root",password="",database="bdlanchonete")
+                  mycursor = connection.cursor()
+
+                  CodPedido_entry["state"] = "normal"            
+                  sqlVenda = "INSERT  INTO vendas(cod_pedido,cod_operador,id_clientes,vl_total,pedido_fechado) VALUES('{}','{}','{}','{}','{}')".format(CodPedido_entry.get(),CodOperador_entry.get(),"teste",total_pedido_entry.get(),"N")
+                  mycursor.execute(sqlVenda)         
+
+                  mycursor.close()
+                  connection.commit()
+                  connection.close()
+                  
+                  children =   ShowItens_tv.get_children()
+                  #percorrendo tods os itens e pegado so o valor total do item
+                  for i in children:
+                        info = ShowItens_tv.item(i,"values")
+                        cod = info[0]
+                        desc = info[1]
+                        un = info[2]
+                        qtd = info[3]
+                        vlunit = info[4]
+                        total_item = info[5]
+
+                        connection = pymysql.connect(host="localhost",user="root",password="",database="bdlanchonete")
+                        mycursor = connection.cursor()
+                        sqlItens = "INSERT  INTO itens_venda(id_venda, cod_prod_venda, prod_des_venda,un_venda, qtd_venda, vl_init_venda, vl_total_venda) VALUES('{}','{}','{}','{}','{}','{}','{}')".format(CodPedido_entry.get(),cod,desc,un,qtd,vlunit,total_item)
+                        mycursor.execute(sqlItens)
+                        mycursor.close()
+                        connection.commit()
+                        connection.close()
+
+
+                  ShowItens_tv.delete(*ShowItens_tv.get_children()) #limpa a lista
+                  total_pedido_entry.delete(0,END)
+                  total_pedido_entry.insert(0,"0,00")
+                  CodPedido_entry["state"] = "disabled"
+                  Ultimocodigo()
+            else:
+                  print("Não tem pedido")
+                  # salvando os dados do pedido
+                  connection = pymysql.connect(host="localhost",user="root",password="",database="bdlanchonete")
+                  mycursor = connection.cursor()
+
+                  CodPedido_entry["state"] = "normal"            
+                  sqlVenda = "INSERT  INTO vendas(cod_pedido,cod_operador,id_clientes,vl_total,pedido_fechado) VALUES('{}','{}','{}','{}','{}')".format(CodPedido_entry.get(),CodOperador_entry.get(),"teste",total_pedido_entry.get(),"N")
+                  mycursor.execute(sqlVenda)         
+
+                  mycursor.close()
+                  connection.commit()
+                  connection.close()
+                  
+                  children =   ShowItens_tv.get_children()
+                  #percorrendo tods os itens e pegado so o valor total do item
+                  for i in children:
+                        info = ShowItens_tv.item(i,"values")
+                        cod = info[0]
+                        desc = info[1]
+                        un = info[2]
+                        qtd = info[3]
+                        vlunit = info[4]
+                        total_item = info[5]
+
+                        connection = pymysql.connect(host="localhost",user="root",password="",database="bdlanchonete")
+                        mycursor = connection.cursor()
+                        sqlItens = "INSERT  INTO itens_venda(id_venda, cod_prod_venda, prod_des_venda,un_venda, qtd_venda, vl_init_venda, vl_total_venda) VALUES('{}','{}','{}','{}','{}','{}','{}')".format(CodPedido_entry.get(),cod,desc,un,qtd,vlunit,total_item)
+                        mycursor.execute(sqlItens)
+                        mycursor.close()
+                        connection.commit()
+                        connection.close()
+
+
+                  ShowItens_tv.delete(*ShowItens_tv.get_children()) #limpa a lista
+                  total_pedido_entry.delete(0,END)
+                  total_pedido_entry.insert(0,"0,00")
+                  CodPedido_entry["state"] = "disabled"
+                  Ultimocodigo()
+
+      def PesquisarPedido():
+
+            connection = mysql.connector.connect(host="localhost",user="root",password="",database="bdlanchonete")
+            mycursor = connection.cursor()
+           
+            sqlselect = "SELECT cod_pedido, pedido_fechado  FROM  vendas where  cod_pedido = '{}' ".format(Cod_Pesquisa_entry.get())  # like (parecido com)
+           
+            mycursor.execute(sqlselect)
+            valido = mycursor.fetchall()
             
+            if len(valido) > 0: 
+                  for venda in valido:                        
+                                              
+                        if venda[1] == "S":
+                              messagebox.showinfo(title="ERRO",message="Pedido fechado não pode ser alterado")
+                              Cod_Pesquisa_entry.delete(0,END)
+                              Cod_Pesquisa_entry.focus()
+
+                        else:
+                              
+                              connection = mysql.connector.connect(host="localhost",user="root",password="",database="bdlanchonete")
+                              mycursor = connection.cursor()
+
+                  
+                              sqlselect = "SELECT *  FROM  vendas where  cod_pedido = '{}' ".format(Cod_Pesquisa_entry.get()) 
+                              mycursor.execute(sqlselect) 
+
+                              for pedido in mycursor:
+
+                                    codigoPedido = pedido[0]
+                                    operador = pedido[1]
+                                    cliente = pedido[2]
+                                    valorTotal = pedido[3]
+
+                                    CodPedido_entry["state"] = "normal"
+                                    CodPedido_entry.delete(0,END)
+                                    CodPedido_entry.insert(0,codigoPedido)
+                                    CodPedido_entry["state"] = "disabled"
+
+                                    CodOperador_entry.delete(0,END)
+                                    CodOperador_entry.insert(0,operador)
+
+                                    total_pedido_entry.delete(0,END)
+                                    total_pedido_entry.insert(0,valorTotal)
+
+
+                              ShowItens_tv.delete(*ShowItens_tv.get_children()) #limpa a lista
+                              connection = mysql.connector.connect(host="localhost",user="root",password="",database="bdlanchonete")
+                              mycursor = connection.cursor()
+
+                              sqlselect = "SELECT cod_prod_venda,prod_des_venda,un_venda,qtd_venda,vl_init_venda,vl_total_venda   FROM  itens_venda where  id_venda = '{}' ".format(Cod_Pesquisa_entry.get()) 
+                              mycursor.execute(sqlselect) 
+
+                              for itens in mycursor:
+                                    ShowItens_tv.insert("","end",values=(itens))
+                                    Cod_Pesquisa_entry.delete(0,END)
+                                    
+
+
+                                    
+            else:
+                   messagebox.showinfo(title="ERRO",message="Pedido  não encontrado")
+                   Cod_Pesquisa_entry.delete(0,END)
+                   Cod_Pesquisa_entry.focus()
+                  
+      def BaixaEstoque(): # Função para da Baixa no estoque dos produtos vendidos
+
             children =   ShowItens_tv.get_children()
-          #percorrendo tods os itens e pegado so o valor total do item
+                  #percorrendo tods os itens e pegado so a quantidade e o codigo do item
             for i in children:
-                 info = ShowItens_tv.item(i,"values")
-                 cod = info[0]
-                 desc = info[1]
-                 un = info[2]
-                 qtd = info[3]
-                 vlunit = info[4]
-                 total_item = info[5]
+                  info = ShowItens_tv.item(i,"values")
+                  cod = info[0]
+                  qtd = info[3]
 
-                 connection = pymysql.connect(host="localhost",user="root",password="",database="bdlanchonete")
-                 mycursor = connection.cursor()
-                 sqlItens = "INSERT  INTO itens_venda(id_venda, cod_prod_venda, prod_des_venda,un_venda, qtd_venda, vl_init_venda, vl_total_venda) VALUES('{}','{}','{}','{}','{}','{}','{}')".format(CodPedido_entry.get(),cod,desc,un,qtd,vlunit,total_item)
-                 mycursor.execute(sqlItens)
-                 mycursor.close()
-                 connection.commit()
-                 connection.close()
+                  connection = pymysql.connect(host="localhost",user="root",password="",database="bdlanchonete")
+                  mycursor = connection.cursor()
+
+                  # Buscando a quantidade do estoque do produto.
+                  sqlEstoqueAtual = "SELECT estoque FROM produtos WHERE cod_produto = {}".format(cod)
+                  mycursor.execute(sqlEstoqueAtual)
+
+                  for estoqueAtual in mycursor:
+                        print(estoqueAtual)
+                        UpdateEstoque = int(estoqueAtual[0]) - int(qtd) # fazendo a operação para diminuir a quantidade vendida
+
+                        connection = pymysql.connect(host="localhost",user="root",password="",database="bdlanchonete")
+                        mycursor = connection.cursor()
+                        # Baixando o estoque
+                        sqlUpdateEstoque = "UPDATE produtos SET estoque = {} WHERE cod_produto = {}".format(UpdateEstoque,cod)
+                        mycursor.execute(sqlUpdateEstoque)
+                        mycursor.close()
+                        connection.commit()
+                        connection.close()
 
 
-            ShowItens_tv.delete(*ShowItens_tv.get_children()) #limpa a lista
-            total_pedido_entry.delete(0,END)
-            total_pedido_entry.insert(0,"0,00")
-            CodPedido_entry["state"] = "disabled"
-            Ultimocodigo()
 
 
       # Label(Pedidos_window,text="Pedidos").grid(row=0,column=0,sticky=W,pady=10)
@@ -184,17 +458,25 @@ def MainVendas():
       CodPedido_label = Label(Pedidos_window,text="Cód. Pedido:",bg="#C0C0C0", font="Britannic 10 bold")
       CodPedido_label.grid(row=0,column=0,sticky=W)
 
-      CodPedido_entry = Entry(Pedidos_window,width=30, bd=4)
+      CodPedido_entry = Entry(Pedidos_window,width=8, bd=4)
       CodPedido_entry.grid(row=0,column=1,sticky=W)
       Ultimocodigo()
       
       #operador
       CodOperador_label = Label(Pedidos_window,text="Operador:",bg="#C0C0C0", font="Britannic 10 bold")
       CodOperador_label.grid(row=0,column=2,sticky=W)
-
       
-      CodOperador_entry = Entry(Pedidos_window,width=30, bd=4)
+      CodOperador_entry = Entry(Pedidos_window,width=15, bd=4)
       CodOperador_entry.grid(row=0,column=3,sticky=W)
+
+      #Pesquisar Pedido
+      Cod_Pesquisa_label = Label(Pedidos_window,text="Pesquisar pedido:",bg="#C0C0C0", font="Britannic 10 bold")
+      Cod_Pesquisa_label.grid(row=0,column=4,sticky=W)
+      
+      Cod_Pesquisa_entry = Entry(Pedidos_window,width=8, bd=4)
+      Cod_Pesquisa_entry.grid(row=0,column=5,sticky=W)
+
+
       #produto
       CodProd_label = Label(Pedidos_window,text="Cód. Prod:",bg="#C0C0C0", font="Britannic 10 bold")
       CodProd_label.grid(row=2,column=0,sticky=W)
@@ -247,14 +529,18 @@ def MainVendas():
       VlTotal_entry.place(x=200,y=50)
 
       #botoes
-      view_exist = Button(Pedidos_window,text="Imprimir", bg="#C0C0C0", width= 10, padx=20, pady=2, borderwidth=5)
+
+      PesquisarPedido= Button(Pedidos_window,text="Pesquisar", bg="#C0C0C0", width= 5, padx=20, pady=2,command=PesquisarPedido)
+      PesquisarPedido.grid(row=0,column=6,sticky=W)
+
+      view_exist = Button(Pedidos_window,text="Salva Pedido", bg="#C0C0C0", width= 10, padx=20, pady=2, borderwidth=5,command=SalvarPedido)
       view_exist.place(x=20,y=350)
 
       Item_add = Button(Pedidos_window,text="Adicionar", bg="#C0C0C0", width= 5, height=1, padx=20, pady=2, command=inserir_lista)
       Item_add.place(x=300,y=50)
 
-      Item_ex = Button(Pedidos_window,text="Excluir", bg="#C0C0C0", width= 10, padx=20, pady=2, borderwidth=5, command=excluir_item_lista)
-      Item_ex.place(x=290,y=350)
+      Item_ex = Button(Pedidos_window,text="Excluir", bg="#C0C0C0", width= 5, padx=20, pady=2,  command=excluir_item_lista)
+      Item_ex.place(x=390,y=50)
 
       Item_ex = Button(Pedidos_window,text="Fechar Pedido", bg="#C0C0C0", width= 10, padx=20, pady=2, borderwidth=5, command=fechar_pedido)
       Item_ex.place(x=150,y=350)

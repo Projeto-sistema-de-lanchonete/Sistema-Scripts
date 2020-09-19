@@ -11,6 +11,35 @@ def MainUsuario():
       
       
       def EditUsuario():
+            def UpdateUsuario():
+  
+                  connection = pymysql.connect(host="localhost",user="root",password="",database="bdlanchonete")
+                  mycursor = connection.cursor()
+
+                  # abrituindo os valores dos entry a uma variável-----------------
+                  user = str(Usuario_entry.get())
+                  cpf = str(Cpf_entry.get())
+                  senha = str(Senha_entry.get())
+                  ide = str(Id_entry.get())
+
+                  # Script de Update
+                  sqlupdate = "UPDATE usuarios SET  nome='{}', cpf={}, senha={} where id ={}".format(user, cpf, senha,ide)
+                  print(sqlupdate)
+                  mycursor.execute(sqlupdate)
+
+                  
+                  # Zera os campos
+                  Usuario_entry.delete(0,END)
+                  Cpf_entry.delete(0,END)
+                  Senha_entry.delete(0,END)
+
+                  time.sleep(2)
+                  messagebox.showinfo(title="Info",message="Usuário alterado com sucesso!")
+                  # Texto_label["text"] = "Usuário cadastrado com sucesso!"
+                  # Fecha a conexão do banco de dados
+                  mycursor.close()
+                  connection.commit()
+                  connection.close()
             def PesquisarUsuario():
                   connection = pymysql.connect(host="localhost",user="root",password="",database="bdlanchonete")
                   mycursorEdit = connection.cursor()
@@ -78,6 +107,9 @@ def MainUsuario():
             
             salvar_add = Button(signin_window,text="Salvar",bg="#DCDCDC", padx=20, pady=2, borderwidth=5,command=UpdateUsuario)
             salvar_add.grid(row=5,column=1,rowspan=2,padx=20, pady=20,sticky=W+E)
+      
+
+
 
 
             signin_window.mainloop()
@@ -177,36 +209,7 @@ def MainUsuario():
  
 
       # Funçao para Alterar o cadastro de usuário 
-      def UpdateUsuario():
-            connection = pymysql.connect(host="localhost",user="root",password="",database="bdlanchonete")
-            mycursor = connection.cursor()
-
-            # abrituindo os valores dos entry a uma variável-----------------
-            user = str(Usuario_entry.get())
-            cpf = str(Cpf_entry.get())
-            senha = str(Senha_entry.get())
-            ide = str(Id_entry.get())
-
-            # Script de Update
-            sqlupdate = "UPDATE usuarios SET  nome='{}', cpf={}, senha={} where id ={}".format(user, cpf, senha,ide)
-            print(sqlupdate)
-            mycursor.execute(sqlupdate)
-
-            
-        # Zera os campos
-            Usuario_entry.delete(0,END)
-            Cpf_entry.delete(0,END)
-            Senha_entry.delete(0,END)
-
-            time.sleep(2)
-            messagebox.showinfo(title="Info",message="Usuário alterado com sucesso!")
-            # Texto_label["text"] = "Usuário cadastrado com sucesso!"
-        # Fecha a conexão do banco de dados
-            mycursor.close()
-            connection.commit()
-            connection.close()
-
-
+     
     
 
       # ----------------------------------------------------------------------
