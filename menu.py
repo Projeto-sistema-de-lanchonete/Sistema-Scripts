@@ -3,6 +3,7 @@ from produtos import MainProdutos
 from clientes import MainClientes
 from usuario import MainUsuario
 from vendas import MainVendas
+from TipoPagamento import TipoPagamentos
 from tkinter import messagebox
 # from login import MainLogin
 from PIL import ImageTk, Image
@@ -83,6 +84,8 @@ def MainMenu():
     exibir.add_command(label="Clientes",command=MainClientes)
     exibir.add_separator()   
     exibir.add_command(label="Usuários",command=MainUsuario)
+    exibir.add_separator()   
+    exibir.add_command(label="Tipos Pagamentos",command=TipoPagamentos)
 
     exibir = Menu(menu_bar,tearoff=0)
     menu_bar.add_cascade(label="Ajuda",menu=exibir)

@@ -123,6 +123,253 @@ def MainVendas():
                    
               else:
                   messagebox.showwarning("Warning","Produto não localizado") # Mensagem caso não encontre produto.
+      def InserirPagamento():
+            def SomandoPagamentos(valorPedido): # Função soma todos os pagamento da lista
+                  total = 0
+                  float(total)
+                        # Pegando todos os itens da tree
+                  children =   ShowTipPag_tv.get_children()
+                  #percorrendo tods os itens e pegado so o valor total do item
+                  for i in children:
+                        info = ShowTipPag_tv.item(i,"values")
+                        item = info[1]
+                        
+                        total = float(valorPedido) - float(item)
+                        valorPedido = total             
+                        
+                        
+                  RestaValorPedido_entry.delete(0,END)
+                  RestaValorPedido_entry.insert(0,moeda(1,total))
+                   
+
+            def InserirPagLista(): # Função inseri os pagamentos na lista
+                  ShowTipPag_tv.insert("","end",values=(comboboxcat.get(), ValorPagamento_entry.get()))   
+                  ValorPagamento_entry.delete(0,END)
+                  comboboxcat.set("Selecione")
+                  SomandoPagamentos(ValorPedido_entry.get())
+
+                  resta = RestaValorPedido_entry.get()
+
+                  if resta == "0.00" :
+                        Btn_ADD["state"] = "disabled"
+                        Btn_Ex["state"] = "normal"
+            def ExcluirPagLista(): # Função Exclui os pagamentos na lista
+                   try:
+                        itemSelecionado =  ShowTipPag_tv.selection()[0] # pegando o item selecionado
+                        ShowTipPag_tv.delete(itemSelecionado) # apagando o item
+                        SomandoPagamentos(ValorPedido_entry.get()) # recalculando o valor totas do pedido
+                        Btn_ADD["state"] = "normal"
+
+                   except:
+                        messagebox.showinfo(title="ERRO",message="Selecione um item") # mensagem caso não exista item selecionado
+            def GravarPag(): # Função salva o pagamento no banco
+                  children =   ShowTipPag_tv.get_children()
+                  #percorrendo todos os pagamento 
+                  for i in children:
+                        info = ShowTipPag_tv.item(i,"values")
+                        pag = info[0]
+                        valor = info[1]
+                        codigoPedido=CodPedido_entry.get()
+
+                        connection = pymysql.connect(host="localhost",user="root",password="",database="bdlanchonete")
+                        mycursor = connection.cursor()
+                        sqlItens = "INSERT  INTO venda_pag(id_venda, desc_pag,valor_pag) VALUES('{}','{}','{}')".format(codigoPedido,pag,valor)
+                        mycursor.execute(sqlItens)
+                        mycursor.close()
+                        connection.commit()
+                        connection.close()
+
+            def FinalizarPag(): #Finaliza o Pedido
+
+                  # salvando os dados do pedido
+                  connection = mysql.connector.connect(host="localhost",user="root",password="",database="bdlanchonete")
+                  mycursor = connection.cursor()
+
+                  CodPedido_entry["state"] = "normal"
+                  sqlselect = "SELECT cod_pedido  FROM  vendas where  cod_pedido = '{}' ".format(CodPedido_entry.get())  # like (parecido com)
+            
+                  mycursor.execute(sqlselect)
+                  valido = mycursor.fetchall()
+
+
+                  if len(valido) > 0:
+                  
+                        print("tem pedido")
+                        connection = pymysql.connect(host="localhost",user="root",password="",database="bdlanchonete")
+                        mycursor= connection.cursor()
+                        
+                        CodPedido_entry["state"] = "normal"
+                        sqldeleteItens = "DELETE FROM itens_venda where id_venda = {};".format(CodPedido_entry.get())
+                        mycursor.execute(sqldeleteItens)
+                        connection.commit()            
+
+                        CodPedido_entry["state"] = "normal"
+                        sqldeleteVenda = "DELETE  FROM vendas where cod_pedido = {};".format(CodPedido_entry.get())
+                        mycursor.execute(sqldeleteVenda)
+            
+                        mycursor.close()
+                        connection.commit()
+                        connection.close()
+
+                        # salvando os dados do pedido
+                        connection = pymysql.connect(host="localhost",user="root",password="",database="bdlanchonete")
+                        mycursor = connection.cursor()
+
+                        CodPedido_entry["state"] = "normal"            
+                        sqlVenda = "INSERT  INTO vendas(cod_pedido,cod_operador,id_clientes,vl_total,pedido_fechado) VALUES('{}','{}','{}','{}','{}')".format(CodPedido_entry.get(),CodOperador_entry.get(),"teste",total_pedido_entry.get(),"S")
+                        mycursor.execute(sqlVenda)         
+
+                        mycursor.close()
+                        connection.commit()
+                        connection.close()
+                        
+                        children =   ShowItens_tv.get_children()
+                        #percorrendo tods os itens e pegado so o valor total do item
+                        for i in children:
+                              info = ShowItens_tv.item(i,"values")
+                              cod = info[0]
+                              desc = info[1]
+                              un = info[2]
+                              qtd = info[3]
+                              vlunit = info[4]
+                              total_item = info[5]
+
+                              connection = pymysql.connect(host="localhost",user="root",password="",database="bdlanchonete")
+                              mycursor = connection.cursor()
+                              sqlItens = "INSERT  INTO itens_venda(id_venda, cod_prod_venda, prod_des_venda,un_venda, qtd_venda, vl_init_venda, vl_total_venda) VALUES('{}','{}','{}','{}','{}','{}','{}')".format(CodPedido_entry.get(),cod,desc,un,qtd,vlunit,total_item)
+                              mycursor.execute(sqlItens)
+                              mycursor.close()
+                              connection.commit()
+                              connection.close()
+                        GravarPag()      
+                        BaixaEstoque()
+
+
+                        ShowItens_tv.delete(*ShowItens_tv.get_children()) #limpa a lista
+                        total_pedido_entry.delete(0,END)
+                        total_pedido_entry.insert(0,"0,00")
+                        CodPedido_entry["state"] = "disabled"
+                        Ultimocodigo()
+                        Pagamento_window.destroy() # Fecha a janela
+                  else:
+                        
+                        print("Não tem pedido")
+                        # salvando os dados do pedido
+                        connection = pymysql.connect(host="localhost",user="root",password="",database="bdlanchonete")
+                        mycursor = connection.cursor()
+
+                        CodPedido_entry["state"] = "normal"            
+                        sqlVenda = "INSERT  INTO vendas(cod_pedido,cod_operador,id_clientes,vl_total,pedido_fechado) VALUES('{}','{}','{}','{}','{}')".format(CodPedido_entry.get(),CodOperador_entry.get(),"teste",total_pedido_entry.get(),"N")
+                        mycursor.execute(sqlVenda)         
+
+                        mycursor.close()
+                        connection.commit()
+                        connection.close()
+                        
+                        children =   ShowItens_tv.get_children()
+                        #percorrendo tods os itens e pegado so o valor total do item
+                        for i in children:
+                              info = ShowItens_tv.item(i,"values")
+                              cod = info[0]
+                              desc = info[1]
+                              un = info[2]
+                              qtd = info[3]
+                              vlunit = info[4]
+                              total_item = info[5]
+
+                              connection = pymysql.connect(host="localhost",user="root",password="",database="bdlanchonete")
+                              mycursor = connection.cursor()
+                              sqlItens = "INSERT  INTO itens_venda(id_venda, cod_prod_venda, prod_des_venda,un_venda, qtd_venda, vl_init_venda, vl_total_venda) VALUES('{}','{}','{}','{}','{}','{}','{}')".format(CodPedido_entry.get(),cod,desc,un,qtd,vlunit,total_item)
+                              mycursor.execute(sqlItens)
+                              mycursor.close()
+                              connection.commit()
+                              connection.close()
+                        GravarPag()      
+                        BaixaEstoque()
+
+
+                        ShowItens_tv.delete(*ShowItens_tv.get_children()) #limpa a lista
+                        total_pedido_entry.delete(0,END)
+                        total_pedido_entry.insert(0,"0,00")
+                        CodPedido_entry["state"] = "disabled"
+                        Ultimocodigo()
+
+
+                        Pagamento_window.destroy()# Fecha a janela
+
+            Pagamento_window = Toplevel()
+            Pagamento_window.title("Lanchonete | Pagamento")
+            Pagamento_window.resizable(True,True) 
+            #Pagamento_window.geometry("750x500")                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          /;//  ") 
+            Pagamento_window.iconbitmap("imagens/ico.lanchonete.ico")
+            Pagamento_window.configure(bg="#DCDCDC")
+
+            ValorPedido_label = Label(Pagamento_window,text = "Valor Pedido")
+            ValorPedido_label.grid(row=0, column=1)
+      
+
+            ValorPedido_entry = Entry(Pagamento_window,width = 8)
+            ValorPedido_entry.grid(row=0,column= 2)
+            ValorPedido_entry.insert(0,total_pedido_entry.get())
+            ValorPedido_entry["state"] = "disabled"
+
+            labelcat = gui.Label(Pagamento_window,text="Pagamento:", bg="#C0C0C0", font="Britannic 10 bold")
+            labelcat.grid(row=3,column=0,sticky=W)
+
+            # Preencher ComboBo
+            connection = mysql.connector.connect(host="localhost",user="root",password="",database="bdlanchonete")
+            mycursor = connection.cursor()
+
+            sqlselect = "SELECT desc_pag FROM  tipo_pag"
+            mycursor.execute(sqlselect)
+
+            tipo=[]
+            for pagamento in mycursor:
+                
+                  tipo.append(pagamento)
+                
+
+            comboboxcat = ttk.Combobox(Pagamento_window, width=15, values=tipo, state="readonly") # adicionando um Combobox
+            comboboxcat.set("Selecione") # o combobox inicia vazio se não for selecionado uma opção para ele iniciar | para fazer isso usa-se o .set
+            comboboxcat.grid(row=3, column=1,padx=5,pady=3,ipady=3)
+
+            ValorPagamento_label = Label(Pagamento_window,text = "Valor:")
+            ValorPagamento_label.grid(row=3, column=2)
+      
+
+            ValorPagamento_entry = Entry(Pagamento_window,width = 8)
+            ValorPagamento_entry.grid(row=3,column= 3)
+           
+           
+            Btn_ADD = Button(Pagamento_window,text="Adicionar",command=InserirPagLista)
+            Btn_ADD.grid(row=3,column=5)
+
+
+            #Treeview
+            ShowTipPag_tv = ttk.Treeview(Pagamento_window,columns=('pag','valor'),show='headings')
+            ShowTipPag_tv.column('pag',minwidth=0,width=100)
+            ShowTipPag_tv.column('valor',minwidth=0,width=150)
+            
+            ShowTipPag_tv.heading('pag',text="Pagamento")
+            ShowTipPag_tv.heading('valor',text="Valor")            
+            ShowTipPag_tv.grid(row=6,column=1,columnspan=6)
+
+            Btn_Ex = Button(Pagamento_window,text="Excluir",command=ExcluirPagLista)
+            Btn_Ex.grid(row=7,column=5)
+
+            RestaValorPedido_label = Label(Pagamento_window,text = "Resta")
+            RestaValorPedido_label.grid(row=8, column=1)
+
+            RestaValorPedido_entry = Entry(Pagamento_window,width = 8)
+            RestaValorPedido_entry.grid(row=8,column= 2)
+            RestaValorPedido_entry.insert(0,total_pedido_entry.get())
+
+            Btn_Ex = Button(Pagamento_window,text="Finalizar Pagamento",command=FinalizarPag)
+            Btn_Ex.grid(row=8,column=3)
+            Btn_Ex["state"] = "disabled"
+
+            Pagamento_window.mainloop()
+
 
       def SomandoItens(): # Função soma todos os itens da lista
            total = 0
@@ -140,112 +387,8 @@ def MainVendas():
            total_pedido_entry.delete(0,END)
            total_pedido_entry.insert(0,moeda(1,total))     
       def fechar_pedido(): # Função Para fechar o pedido , colocando no campo pedido_fechado= "S"
-            # salvando os dados do pedido
-            connection = mysql.connector.connect(host="localhost",user="root",password="",database="bdlanchonete")
-            mycursor = connection.cursor()
-
-            CodPedido_entry["state"] = "normal"
-            sqlselect = "SELECT cod_pedido  FROM  vendas where  cod_pedido = '{}' ".format(CodPedido_entry.get())  # like (parecido com)
-           
-            mycursor.execute(sqlselect)
-            valido = mycursor.fetchall()
-
-            if len(valido) > 0:
-                  print("tem pedido")
-                  connection = pymysql.connect(host="localhost",user="root",password="",database="bdlanchonete")
-                  mycursor= connection.cursor()
-                  
-                  CodPedido_entry["state"] = "normal"
-                  sqldeleteItens = "DELETE FROM itens_venda where id_venda = {};".format(CodPedido_entry.get())
-                  mycursor.execute(sqldeleteItens)
-                  connection.commit()            
-
-                  CodPedido_entry["state"] = "normal"
-                  sqldeleteVenda = "DELETE  FROM vendas where cod_pedido = {};".format(CodPedido_entry.get())
-                  mycursor.execute(sqldeleteVenda)
-      
-                  mycursor.close()
-                  connection.commit()
-                  connection.close()
-
-                  # salvando os dados do pedido
-                  connection = pymysql.connect(host="localhost",user="root",password="",database="bdlanchonete")
-                  mycursor = connection.cursor()
-
-                  CodPedido_entry["state"] = "normal"            
-                  sqlVenda = "INSERT  INTO vendas(cod_pedido,cod_operador,id_clientes,vl_total,pedido_fechado) VALUES('{}','{}','{}','{}','{}')".format(CodPedido_entry.get(),CodOperador_entry.get(),"teste",total_pedido_entry.get(),"S")
-                  mycursor.execute(sqlVenda)         
-
-                  mycursor.close()
-                  connection.commit()
-                  connection.close()
-                  
-                  children =   ShowItens_tv.get_children()
-                  #percorrendo tods os itens e pegado so o valor total do item
-                  for i in children:
-                        info = ShowItens_tv.item(i,"values")
-                        cod = info[0]
-                        desc = info[1]
-                        un = info[2]
-                        qtd = info[3]
-                        vlunit = info[4]
-                        total_item = info[5]
-
-                        connection = pymysql.connect(host="localhost",user="root",password="",database="bdlanchonete")
-                        mycursor = connection.cursor()
-                        sqlItens = "INSERT  INTO itens_venda(id_venda, cod_prod_venda, prod_des_venda,un_venda, qtd_venda, vl_init_venda, vl_total_venda) VALUES('{}','{}','{}','{}','{}','{}','{}')".format(CodPedido_entry.get(),cod,desc,un,qtd,vlunit,total_item)
-                        mycursor.execute(sqlItens)
-                        mycursor.close()
-                        connection.commit()
-                        connection.close()
-                  BaixaEstoque()
-
-
-                  ShowItens_tv.delete(*ShowItens_tv.get_children()) #limpa a lista
-                  total_pedido_entry.delete(0,END)
-                  total_pedido_entry.insert(0,"0,00")
-                  CodPedido_entry["state"] = "disabled"
-                  Ultimocodigo()
-            else:
-                  print("Não tem pedido")
-                  # salvando os dados do pedido
-                  connection = pymysql.connect(host="localhost",user="root",password="",database="bdlanchonete")
-                  mycursor = connection.cursor()
-
-                  CodPedido_entry["state"] = "normal"            
-                  sqlVenda = "INSERT  INTO vendas(cod_pedido,cod_operador,id_clientes,vl_total,pedido_fechado) VALUES('{}','{}','{}','{}','{}')".format(CodPedido_entry.get(),CodOperador_entry.get(),"teste",total_pedido_entry.get(),"N")
-                  mycursor.execute(sqlVenda)         
-
-                  mycursor.close()
-                  connection.commit()
-                  connection.close()
-                  
-                  children =   ShowItens_tv.get_children()
-                  #percorrendo tods os itens e pegado so o valor total do item
-                  for i in children:
-                        info = ShowItens_tv.item(i,"values")
-                        cod = info[0]
-                        desc = info[1]
-                        un = info[2]
-                        qtd = info[3]
-                        vlunit = info[4]
-                        total_item = info[5]
-
-                        connection = pymysql.connect(host="localhost",user="root",password="",database="bdlanchonete")
-                        mycursor = connection.cursor()
-                        sqlItens = "INSERT  INTO itens_venda(id_venda, cod_prod_venda, prod_des_venda,un_venda, qtd_venda, vl_init_venda, vl_total_venda) VALUES('{}','{}','{}','{}','{}','{}','{}')".format(CodPedido_entry.get(),cod,desc,un,qtd,vlunit,total_item)
-                        mycursor.execute(sqlItens)
-                        mycursor.close()
-                        connection.commit()
-                        connection.close()
-                  BaixaEstoque()
-
-
-                  ShowItens_tv.delete(*ShowItens_tv.get_children()) #limpa a lista
-                  total_pedido_entry.delete(0,END)
-                  total_pedido_entry.insert(0,"0,00")
-                  CodPedido_entry["state"] = "disabled"
-                  Ultimocodigo()
+            InserirPagamento()
+            
 
       def SalvarPedido(): # Função Para Salva  o pedido, colocando no campo pedido_fechado= "N"
 
