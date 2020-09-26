@@ -5,6 +5,7 @@ from tkinter import messagebox
 from PIL import ImageTk, Image
 import mysql.connector # pip install mysql-connector
 import pymysql # pip install pymysq
+from datetime import date
 
 
 
@@ -16,7 +17,7 @@ def MainVendas():
       #Pedidos_window.geometry("750x500")                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          /;//  ") 
       Pedidos_window.iconbitmap("imagens/ico.lanchonete.ico")
       Pedidos_window.configure(bg="#DCDCDC")
-            
+          
       def Ultimocodigo(): # Pega o maior valor da coluna cod_pedido para colocar na entry Cod           
 
             connection = mysql.connector.connect(host="localhost",user="root",password="",database="bdlanchonete")
@@ -32,7 +33,7 @@ def MainVendas():
             CodPedido_entry.delete(0,END)
             CodPedido_entry.insert(0,ultimocod[0]+1)
             CodPedido_entry["state"] = "disabled"
-     
+          
       def tecla(e): # Função para quando apertar enter no teclado fazer o calculo
 
             VlTotal_entry.delete(0,END) # Apagando o valor ja existente
@@ -178,6 +179,7 @@ def MainVendas():
                         mycursor.close()
                         connection.commit()
                         connection.close()
+                  GerarArquivo(codigoPedido)      
 
             def FinalizarPag(): #Finaliza o Pedido
 
@@ -216,7 +218,7 @@ def MainVendas():
                         mycursor = connection.cursor()
 
                         CodPedido_entry["state"] = "normal"            
-                        sqlVenda = "INSERT  INTO vendas(cod_pedido,cod_operador,id_clientes,vl_total,pedido_fechado) VALUES('{}','{}','{}','{}','{}')".format(CodPedido_entry.get(),CodOperador_entry.get(),"teste",total_pedido_entry.get(),"S")
+                        sqlVenda = "INSERT  INTO vendas(cod_pedido,cod_operador,id_clientes,vl_total,pedido_fechado) VALUES('{}','{}','{}','{}','{}')".format(CodPedido_entry.get(),CodOperador_entry.get(),1,total_pedido_entry.get(),"S")
                         mycursor.execute(sqlVenda)         
 
                         mycursor.close()
@@ -259,7 +261,7 @@ def MainVendas():
                         mycursor = connection.cursor()
 
                         CodPedido_entry["state"] = "normal"            
-                        sqlVenda = "INSERT  INTO vendas(cod_pedido,cod_operador,id_clientes,vl_total,pedido_fechado) VALUES('{}','{}','{}','{}','{}')".format(CodPedido_entry.get(),CodOperador_entry.get(),"teste",total_pedido_entry.get(),"N")
+                        sqlVenda = "INSERT  INTO vendas(cod_pedido,cod_operador,id_clientes,vl_total,pedido_fechado) VALUES('{}','{}','{}','{}','{}')".format(CodPedido_entry.get(),CodOperador_entry.get(),1,total_pedido_entry.get(),"N")
                         mycursor.execute(sqlVenda)         
 
                         mycursor.close()
@@ -369,8 +371,6 @@ def MainVendas():
             Btn_Ex["state"] = "disabled"
 
             Pagamento_window.mainloop()
-
-
       def SomandoItens(): # Função soma todos os itens da lista
            total = 0
            float(total)
@@ -388,8 +388,7 @@ def MainVendas():
            total_pedido_entry.insert(0,moeda(1,total))     
       def fechar_pedido(): # Função Para fechar o pedido , colocando no campo pedido_fechado= "S"
             InserirPagamento()
-            
-
+         
       def SalvarPedido(): # Função Para Salva  o pedido, colocando no campo pedido_fechado= "N"
 
             connection = mysql.connector.connect(host="localhost",user="root",password="",database="bdlanchonete")
@@ -498,7 +497,6 @@ def MainVendas():
                   total_pedido_entry.insert(0,"0,00")
                   CodPedido_entry["state"] = "disabled"
                   Ultimocodigo()
-
       def PesquisarPedido():
 
             connection = mysql.connector.connect(host="localhost",user="root",password="",database="bdlanchonete")
@@ -563,7 +561,7 @@ def MainVendas():
                    messagebox.showinfo(title="ERRO",message="Pedido  não encontrado")
                    Cod_Pesquisa_entry.delete(0,END)
                    Cod_Pesquisa_entry.focus()
-                  
+               
       def BaixaEstoque(): # Função para da Baixa no estoque dos produtos vendidos
 
             children =   ShowItens_tv.get_children()
@@ -592,10 +590,92 @@ def MainVendas():
                         mycursor.close()
                         connection.commit()
                         connection.close()
+      def GerarArquivo(NumeroPedido):
+            hoje = date.today()
+
+            with open("pedidos/Pedido - "+str(NumeroPedido) +'.txt','w+') as pedido:
+
+                  pedido.write("PEDIDO " + "Data: " + str(hoje.day)+"/"+str(hoje.month)+"/"+ str(hoje.year)+"\n")
+                  pedido.write("----------------------------------------\n")
+                  pedido.write("Razão social da Empresa Teste\n")
+                  pedido.write("Nome fantazia em Empresa Teste\n")
+                  pedido.write("Endereço Rua Tal,Nº 237\nBairro,CEP 50.130-360 - Recife/PE\n")
+                  pedido.write("----------------------------------------\n")
+
+                  connection = pymysql.connect(host="localhost",user="root",password="",database="bdlanchonete")
+                  mycursor = connection.cursor()
+
+                  #buscando o pedido
+                  sqlPedido = "SELECT * FROM VENDAS WHERE cod_pedido = {}".format(NumeroPedido)
+                  mycursor.execute(sqlPedido)
+
+                  for venda in mycursor:
+                        cod_pedido = venda[0]
+                        cod_operador = venda[1]
+                        id_clientes = venda[2]
+                        vl_total = venda[3]
+                        data_create = venda[5]
+
+                  #Buscando o Cliente do pedido      
+                  sqlCliente = "SELECT * FROM clientes WHERE cod_cliente = {}".format(id_clientes)
+                  mycursor.execute(sqlCliente)
+
+                  # cod_cliente,nome_cliente,datanasc_cliente,cpf_cliente,rg_cliente,end_cliente,
+                  # nunend_cliente,bairro_cliente,cep_cliente,cidade_cliente,uf_cliente,fone_cliente,celular_cliente,email_cliente      
+                  for Cliente in mycursor:
+                        print(Cliente)
+                  pedido.write("Dados do Cliente: \n")                        
+                  pedido.write("Cod.: " + str(Cliente[0]) + " Nome: " + str(Cliente[1] + "\n"))
+                  pedido.write("CPF: " + str(Cliente[3]) +"\n")
+                  pedido.write("End.: " + str(Cliente[5])+","+ str(Cliente[6])+"\n")
+                  pedido.write("Bairro: " + str(Cliente[7]) + " CEP: " + str(Cliente[8]) + " - "+ str(Cliente[9]) + "/" + str(Cliente[10]) + "\n")
+                  pedido.write("Contato: " + str(Cliente[12]) + "\n")
+                  pedido.write("Pedido: " + str(cod_pedido) + "\n")
+                  pedido.write("---------------------------------------- \n")
+
+
+                  sqlItens = "SELECT * FROM itens_venda WHERE id_venda = {}".format(NumeroPedido)
+                  mycursor.execute(sqlItens)
+                  # id_venda,cod_prod_venda,prod_des_venda,un_venda,qtd_venda,vl_init_venda,vl_total_venda
+
+                  pedido.write("ITEM CODIGO  DESCRIÇÃO  QTD  UN VLUN  VLT  \n")
+                  contador = 1
+                  totalItens = 0
+                  for itens in mycursor:
+                        pedido.write(str(contador) + " " + str(itens[1]) + " " + str(itens[2]) + " " + str(itens[4]) + " " + str(itens[3]) + " " + str(itens[5]) + " " + str(itens[6]) + "\n")
+                        contador = contador + 1
+                        totalItens = totalItens + itens[6]
+
+
+                  pedido.write("---------------------------------------- \n")
+
+                  pedido.write("PAGAMENTO\n")
+                  
+                  sqlPagamento = "SELECT * FROM venda_pag WHERE id_venda = {}".format(NumeroPedido)
+                  mycursor.execute(sqlPagamento)
+
+                  # id_venda,desc_pag,valor_pag
+                  pedido.write("SubTotal ................R$ " + str(totalItens) +"\n")
+                  for pagamento in mycursor:
+                        pedido.write(str(pagamento[1]) +"................R$ " + str(pagamento[2]) + "\n" )
+                  pedido.write("Total................R$ " + str(vl_total))      
 
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+     
       # Label(Pedidos_window,text="Pedidos").grid(row=0,column=0,sticky=W,pady=10)
       #codigo
       CodPedido_label = Label(Pedidos_window,text="Cód. Pedido:",bg="#C0C0C0", font="Britannic 10 bold")
