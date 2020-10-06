@@ -1,4 +1,4 @@
-PEDIDO Data: 26/9/2020
+PEDIDO Data: 5/10/2020
 ----------------------------------------
 Razão social da Empresa Teste
 Nome fantazia em Empresa Teste
@@ -11,7 +11,7 @@ CPF: 08919673462
 End.: rua tal,237
 Bairro: fragoso CEP: 52130360 - olinda/PE
 Contato: 81985278547
-Pedido: 71
+Pedido: 87
 ---------------------------------------- 
 ITEM CODIGO  DESCRIÇÃO  QTD  UN VLUN  VLT  
 1 4 Coxinha 1 UN 4.5 4.5

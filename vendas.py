@@ -1,3 +1,6 @@
+import win32api
+import win32print
+import traceback
 import tkinter as gui
 from tkinter import *
 from tkinter import ttk
@@ -181,7 +184,7 @@ def MainVendas():
                         connection.close()
                   GerarArquivo(codigoPedido)      
 
-            def FinalizarPag(): #Finaliza o Pedido
+            def FinalizarPag(): #Finaliza o Pedido e realiza o pagamento
 
                   # salvando os dados do pedido
                   connection = mysql.connector.connect(host="localhost",user="root",password="",database="bdlanchonete")
@@ -386,9 +389,7 @@ def MainVendas():
             
            total_pedido_entry.delete(0,END)
            total_pedido_entry.insert(0,moeda(1,total))     
-      def fechar_pedido(): # Função Para fechar o pedido , colocando no campo pedido_fechado= "S"
-            InserirPagamento()
-         
+      
       def SalvarPedido(): # Função Para Salva  o pedido, colocando no campo pedido_fechado= "N"
 
             connection = mysql.connector.connect(host="localhost",user="root",password="",database="bdlanchonete")
@@ -497,7 +498,7 @@ def MainVendas():
                   total_pedido_entry.insert(0,"0,00")
                   CodPedido_entry["state"] = "disabled"
                   Ultimocodigo()
-      def PesquisarPedido():
+      def PesquisarPedido(): # Função para pesquisar pedido
 
             connection = mysql.connector.connect(host="localhost",user="root",password="",database="bdlanchonete")
             mycursor = connection.cursor()
@@ -590,10 +591,10 @@ def MainVendas():
                         mycursor.close()
                         connection.commit()
                         connection.close()
-      def GerarArquivo(NumeroPedido):
+      def GerarArquivo(NumeroPedido): # Funçao para gerar o arquivo do pedido
             hoje = date.today()
 
-            with open("pedidos/Pedido - "+str(NumeroPedido) +'.txt','w+') as pedido:
+            with open("pedidos/Pedido"+str(NumeroPedido) +'.txt','w+') as pedido:
 
                   pedido.write("PEDIDO " + "Data: " + str(hoje.day)+"/"+str(hoje.month)+"/"+ str(hoje.year)+"\n")
                   pedido.write("----------------------------------------\n")
@@ -658,22 +659,27 @@ def MainVendas():
                   pedido.write("SubTotal ................R$ " + str(totalItens) +"\n")
                   for pagamento in mycursor:
                         pedido.write(str(pagamento[1]) +"................R$ " + str(pagamento[2]) + "\n" )
-                  pedido.write("Total................R$ " + str(vl_total))      
+                  pedido.write("Total................R$ " + str(vl_total))
+            ImprimirArquivo(NumeroPedido)     
+                  
 
+      def ImprimirArquivo(numeroPedido,event=None): #Função para Imprimir o Pedido
+            arquivo = "C:/Users/Itamar/Documents/GitHub/Sistema-Scripts/pedidos/Pedido"+ str(numeroPedido) +'.txt'
+            _printer = StringVar(Pedidos_window)
+            _printer.set(win32print.GetDefaultPrinter())
+  
+            PRINTER_DEFAULTS = {"DesiredAccess":win32print.PRINTER_ALL_ACCESS} 
+            pHandle = win32print.OpenPrinter(_printer.get(), PRINTER_DEFAULTS)
+            properties = win32print.GetPrinter(pHandle, 2)            
+            win32print.SetPrinter(pHandle, 2, properties, 0)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+            try:
+                  #win32print.SetDefaultPrinter(_printer.get())
+                  win32api.ShellExecute(0, "print", arquivo, None,  ".",  0)
+                  win32print.ClosePrinter(pHandle)
+            except:
+                  pass
+                  messagebox.showerror("Error", "There was an error printing the file :(")
 
      
       # Label(Pedidos_window,text="Pedidos").grid(row=0,column=0,sticky=W,pady=10)
@@ -765,7 +771,7 @@ def MainVendas():
       Item_ex = Button(Pedidos_window,text="Excluir", bg="#C0C0C0", width= 5, padx=20, pady=2,  command=excluir_item_lista)
       Item_ex.place(x=390,y=50)
 
-      Item_ex = Button(Pedidos_window,text="Fechar Pedido", bg="#C0C0C0", width= 10, padx=20, pady=2, borderwidth=5, command=fechar_pedido)
+      Item_ex = Button(Pedidos_window,text="Fechar Pedido", bg="#C0C0C0", width= 10, padx=20, pady=2, borderwidth=5, command=InserirPagamento)
       Item_ex.place(x=150,y=350)
 
 
