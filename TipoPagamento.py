@@ -47,8 +47,6 @@ def TipoPagamentos():
         Ultimocodigo()
         CarregarTree()
 
-
-
       def CarregarTree():
         ShowTipPag_tv.delete(*ShowTipPag_tv.get_children()) #limpa a lista
         connection = mysql.connector.connect(host="localhost",user="root",password="",database="bdlanchonete")

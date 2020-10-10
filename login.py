@@ -31,6 +31,7 @@ def MainLogin():
                   messagebox.showwarning("Warning","Usuário ou senha inválida!")
                   # entryuser.delete(0, END)
                   entrypassword.delete(0, END)
+                  entrypassword.focus()
 
             mycursor.close()
             connection.commit()

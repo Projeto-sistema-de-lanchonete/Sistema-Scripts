@@ -16,8 +16,8 @@ def MainVendas():
 
       Pedidos_window = Toplevel()
       Pedidos_window.title("Lanchonete | Vendas")
-      Pedidos_window.resizable(True,True) 
-      #Pedidos_window.geometry("750x500")                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          /;//  ") 
+      Pedidos_window.resizable(False, False) 
+      Pedidos_window.geometry("750x500")      
       Pedidos_window.iconbitmap("imagens/ico.lanchonete.ico")
       Pedidos_window.configure(bg="#DCDCDC")
           
@@ -94,39 +94,45 @@ def MainVendas():
             CodProd_entry.focus()
             SomandoItens()
       def pesquisarProdutos(): # Função para pesquisar o produto.
-              connection = pymysql.connect(host="localhost",user="root",password="",database="bdlanchonete")
-              mycursor = connection.cursor()
-
-          
-
-              sqlPesquisar = "SELECT * FROM produtos where cod_produto= {}".format(CodProd_entry.get())
-              mycursor.execute(sqlPesquisar)
-              valido = mycursor.fetchall()
-
-              if len(valido) > 0:
-
-
-                  for produto in valido:     # percorrendo o produto  
-                        #print(produto)
-
-                        # Apagando os campos 
-                   DescProd_entry.delete(0,END)
-                   VlUnit_entry.delete(0,END)
-                   VlTotal_entry.delete(0,END)
-
-                        # Colocando os valos
-                   DescProd_entry.insert(0,produto[2])              
-                   VlUnit_entry.insert(0,produto[5])
-
-
-                  qtd = Qtd_label_entry.get()               
-                  vluni = VlUnit_entry.get()               
-                  total = int(qtd) * float(vluni) # calculando o total
-
-                  VlTotal_entry.insert(0,total) # Inserindo o total
-                   
+              if CodProd_entry.get() == "":
+                  messagebox.showwarning("Warning","Informe um codigo para pesquisar") # Mensagem caso não encontre produto.
+                  CodProd_entry.focus()
               else:
-                  messagebox.showwarning("Warning","Produto não localizado") # Mensagem caso não encontre produto.
+
+                  connection = pymysql.connect(host="localhost",user="root",password="",database="bdlanchonete")
+                  mycursor = connection.cursor()
+
+            
+
+                  sqlPesquisar = "SELECT * FROM produtos where cod_produto= {}".format(CodProd_entry.get())
+                  mycursor.execute(sqlPesquisar)
+                  valido = mycursor.fetchall()
+
+
+                  if len(valido) > 0:
+
+
+                        for produto in valido:     # percorrendo o produto  
+                              #print(produto)
+
+                              # Apagando os campos 
+                              DescProd_entry.delete(0,END)
+                              VlUnit_entry.delete(0,END)
+                              VlTotal_entry.delete(0,END)
+
+                                    # Colocando os valos
+                              DescProd_entry.insert(0,produto[2])              
+                              VlUnit_entry.insert(0,produto[5])
+
+
+                              qtd = Qtd_label_entry.get()               
+                              vluni = VlUnit_entry.get()               
+                              total = int(qtd) * float(vluni) # calculando o total
+
+                              VlTotal_entry.insert(0,total) # Inserindo o total
+                        
+                  else:
+                        messagebox.showwarning("Warning","Produto não localizado") # Mensagem caso não encontre produto.
       def InserirPagamento():
             def SomandoPagamentos(valorPedido): # Função soma todos os pagamento da lista
                   total = 0
@@ -248,6 +254,7 @@ def MainVendas():
                               connection.close()
                         GravarPag()      
                         BaixaEstoque()
+                        ImprimirArquivo(CodPedido_entry.get())
 
 
                         ShowItens_tv.delete(*ShowItens_tv.get_children()) #limpa a lista
@@ -291,6 +298,7 @@ def MainVendas():
                               connection.close()
                         GravarPag()      
                         BaixaEstoque()
+                        ImprimirArquivo(CodPedido_entry.get())
 
 
                         ShowItens_tv.delete(*ShowItens_tv.get_children()) #limpa a lista
@@ -580,7 +588,7 @@ def MainVendas():
                   mycursor.execute(sqlEstoqueAtual)
 
                   for estoqueAtual in mycursor:
-                        print(estoqueAtual)
+                        #print(estoqueAtual)
                         UpdateEstoque = int(estoqueAtual[0]) - int(qtd) # fazendo a operação para diminuir a quantidade vendida
 
                         connection = pymysql.connect(host="localhost",user="root",password="",database="bdlanchonete")
@@ -592,15 +600,35 @@ def MainVendas():
                         connection.commit()
                         connection.close()
       def GerarArquivo(NumeroPedido): # Funçao para gerar o arquivo do pedido
+            connection = mysql.connector.connect(host="localhost",user="root",password="",database="bdlanchonete")
+            mycursor = connection.cursor()
+
+            sqlBuscarEmpresa = "SELECT * FROM empresa"
+            mycursor.execute(sqlBuscarEmpresa)
+
+            for data in mycursor:
+                  cod = data[0]
+                  razao_social = data[1]
+                  nome_fantasia = data[2]
+                  cpf_cnpj = data[3]
+                  ie = data[4]
+                  end = data[5]
+                  num = data[6]
+                  bairro = data[7]
+                  cep = data[8]
+                  cidade = data[9]
+                  uf = data[10]
+                  fone = data[11]
+                  email = data[12]
             hoje = date.today()
 
             with open("pedidos/Pedido"+str(NumeroPedido) +'.txt','w+') as pedido:
 
                   pedido.write("PEDIDO " + "Data: " + str(hoje.day)+"/"+str(hoje.month)+"/"+ str(hoje.year)+"\n")
                   pedido.write("----------------------------------------\n")
-                  pedido.write("Razão social da Empresa Teste\n")
-                  pedido.write("Nome fantazia em Empresa Teste\n")
-                  pedido.write("Endereço Rua Tal,Nº 237\nBairro,CEP 50.130-360 - Recife/PE\n")
+                  pedido.write(razao_social+"\n")
+                  pedido.write(nome_fantasia+"\n")
+                  pedido.write(end + ","+"Nº "+ num +"\n" + bairro + ","+ cep + " - " + cidade + "/" + uf +"\n")
                   pedido.write("----------------------------------------\n")
 
                   connection = pymysql.connect(host="localhost",user="root",password="",database="bdlanchonete")
@@ -660,26 +688,34 @@ def MainVendas():
                   for pagamento in mycursor:
                         pedido.write(str(pagamento[1]) +"................R$ " + str(pagamento[2]) + "\n" )
                   pedido.write("Total................R$ " + str(vl_total))
-            ImprimirArquivo(NumeroPedido)     
+                
                   
 
       def ImprimirArquivo(numeroPedido,event=None): #Função para Imprimir o Pedido
-            arquivo = "C:/Users/Itamar/Documents/GitHub/Sistema-Scripts/pedidos/Pedido"+ str(numeroPedido) +'.txt'
-            _printer = StringVar(Pedidos_window)
-            _printer.set(win32print.GetDefaultPrinter())
-  
-            PRINTER_DEFAULTS = {"DesiredAccess":win32print.PRINTER_ALL_ACCESS} 
-            pHandle = win32print.OpenPrinter(_printer.get(), PRINTER_DEFAULTS)
-            properties = win32print.GetPrinter(pHandle, 2)            
-            win32print.SetPrinter(pHandle, 2, properties, 0)
-
             try:
-                  #win32print.SetDefaultPrinter(_printer.get())
-                  win32api.ShellExecute(0, "print", arquivo, None,  ".",  0)
-                  win32print.ClosePrinter(pHandle)
+                 
+                  # Definindo o caminho do arquivo para impressão
+                  arquivo = "C:/Users/Itamar/Documents/GitHub/Sistema-Scripts/pedidos/Pedido"+ str(numeroPedido) +'.txt'
+                  _printer = StringVar(Pedidos_window)
+                  # Setando a impressora padrão do windows
+                  _printer.set(win32print.GetDefaultPrinter())
+                  #print(_printer)
+      
+                  PRINTER_DEFAULTS = {"DesiredAccess":win32print.PRINTER_ALL_ACCESS} 
+                  pHandle = win32print.OpenPrinter(_printer.get(), PRINTER_DEFAULTS)
+                  properties = win32print.GetPrinter(pHandle, 2)            
+                  win32print.SetPrinter(pHandle, 2, properties, 0)
+
+                  try:
+                        #win32print.SetDefaultPrinter(_printer.get())
+                        win32api.ShellExecute(0, "print", arquivo, None,  ".",  0)
+                        win32print.ClosePrinter(pHandle)
+                  except:
+                        pass
+                        messagebox.showerror("Error", "Não foi passivel imprimir o pedido.")
             except:
                   pass
-                  messagebox.showerror("Error", "There was an error printing the file :(")
+                  messagebox.showerror("Error", "Não foi passivel imprimir o pedido.")
 
      
       # Label(Pedidos_window,text="Pedidos").grid(row=0,column=0,sticky=W,pady=10)
@@ -716,13 +752,13 @@ def MainVendas():
       # Colocando Imagem no botao
       width = 20
       height = 20
-      img = Image.open("Imagens/ico.pesquisar.png")
+      img = Image.open("imagens/ico.pesquisar.png")
       img = img.resize((width,height), Image.ANTIALIAS)
       photoImg =  ImageTk.PhotoImage(img)
 
       # imgpesq = PhotoImage(file="Imagens/ico.pesquisar.png")
       # imgpesq.configure(width=5,height=5)
-      btvendas = Button(Pedidos_window,text="Pesquisar",image = photoImg, bg="#DCDCDC", width= 30, height=18,command=pesquisarProdutos)
+      btvendas = Button(Pedidos_window,text="Pesquisar",image=photoImg, bg="#DCDCDC",command=pesquisarProdutos)
       btvendas.place(x=150,y=25)
 
       DescProd_entry = Entry(Pedidos_window,width=19, bd=4)
