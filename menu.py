@@ -3,29 +3,37 @@ from produtos import MainProdutos
 from clientes import MainClientes
 from usuario import MainUsuario
 from vendas import MainVendas
+# from login import User
 from cadastro_empresa import MainEmpresa
-
+from cadastro_Fornecedor import MainFornecedor
 from TipoPagamento import TipoPagamentos
+from entradaNotas import MainMEntradaDeNotas
 from tkinter import messagebox
-# from login import MainLogin
+import mysql.connector
 from PIL import ImageTk, Image
-
-
-     
-    
+ 
 
 def MainMenu():
+    def quit_window():
+      if messagebox.askokcancel("Sair","Deseja realmente sair?"):
+        connection = mysql.connector.connect(host="localhost",user="root",password="",database="bdlanchonete")
+        mycursor = connection.cursor()
+
+        sqlDeleteUsuario = "DELETE FROM  log_usuario "
+        mycursor.execute(sqlDeleteUsuario)
+        connection.commit()    
+
+        window.destroy()
     # ------------Opening Window----------------------------------
     window = Tk()
     window.title("Lanchonete | Menu")
     window.geometry("750x500") # WxH
     window.configure(bg="#DCDCDC")
     window.iconbitmap("imagens/ico.lanchonete.ico")
-    
+    window.protocol("WM_DELETE_WINDOW",quit_window)
 
-    def quit_window():
-      if messagebox.askokcancel("Sair","Deseja realmente sair?"):
-         window.destroy()
+    # print(user)
+
     
     # def Logoff(): # função para deslogar
     #     logoff = messagebox.askokcancel("Logoff","Deseja realmete deslogar desse usuário?")
@@ -52,6 +60,7 @@ def MainMenu():
     imgusu = PhotoImage(file="Imagens/ico.usuario.png")
     imgven = PhotoImage(file="Imagens/ico.vendas.png")
     imgrela = PhotoImage(file="Imagens/ico.relatorio.png")
+    
     
     btprodutos = Button(window,text="Produtos",image = imgpro, bg="#DCDCDC", width= 120, height=60, padx=20, pady=10, borderwidth=4, command=MainProdutos)
     btprodutos.place(x=10,y=80)
@@ -88,6 +97,8 @@ def MainMenu():
     exibir.add_command(label="Usuários",command=MainUsuario)
     exibir.add_separator() 
     exibir.add_command(label="Empresa",command=MainEmpresa)
+    exibir.add_separator()
+    exibir.add_command(label="Fornecedor",command=MainFornecedor)
     exibir.add_separator()  
     exibir.add_command(label="Tipos Pagamentos",command=TipoPagamentos)
 
@@ -99,7 +110,14 @@ def MainMenu():
     exibir.add_separator()   
     exibir.add_command(label="Telefone e informações de contato")
 
+    estoque = Menu(menu_bar,tearoff=0)
+    menu_bar.add_cascade(label="Estoque",menu=estoque)
+    estoque.add_command(label="Entrada de Notas",command=MainMEntradaDeNotas)
+    
+
     window.configure(menu=menu_bar)
+
+    
 
     # ------------Loop End----------------------------------
     window.mainloop()

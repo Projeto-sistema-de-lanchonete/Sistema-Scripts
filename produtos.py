@@ -45,7 +45,7 @@ def MainProdutos():
                 messagebox.showwarning("Warning","Produto já cadastrado!")  
 
         else:   # inserindo os dados no banco -----------------------------------
-                sqlinsert = "INSERT INTO  produtos (ean_produto, nome_produto, categoria_produto, descricão_produto, pre_venda_produto, pre_custo_produto, estoque) VALUES ('{}','{}','{}','{}','{}','{}','{}')".format(ean, nome, comboboxcat.get(), entrydescrição.get("1.0",END), entryprevenda.get(), entryprecusto.get(), entryestoque.get())
+                sqlinsert = "INSERT INTO  produtos (ean_produto, nome_produto, categoria_produto,unidade_produto, descricão_produto, pre_venda_produto, pre_custo_produto, estoque) VALUES ('{}','{}','{}','{}','{}','{}','{}','{}')".format(ean, nome, comboboxcat.get(),entryUnidade.get(), entrydescrição.get("1.0",END), entryprevenda.get(), entryprecusto.get(), entryestoque.get())
                 mycursor.execute(sqlinsert)
 
                
@@ -60,6 +60,7 @@ def MainProdutos():
                 entryprecusto.delete(0,END)
                 entryprevenda.delete(0,END)
                 entryestoque.delete(0,END)
+                entryUnidade.delete(0,END)
 
                 time.sleep(2)
                 messagebox.showinfo(title="Info",message="Produto cadastrado com sucesso!")
@@ -112,7 +113,7 @@ def MainProdutos():
             
 
              # Script de Update
-            sqlupdate = "UPDATE produtos SET  ean_produto = {},nome_produto ='{}', categoria_produto='{}', descricão_produto ='{}', pre_venda_produto = {}, pre_custo_produto = {}, estoque = {} where cod_produto ={}".format(ean,nome, comboboxcat.get(),entrydescrição.get("1.0",END),prevenda,precusto,estoque,cod)
+            sqlupdate = "UPDATE produtos SET  ean_produto = {},nome_produto ='{}', categoria_produto='{}',unidade_produto= '{}', descricão_produto ='{}', pre_venda_produto = {}, pre_custo_produto = {}, estoque = {} where cod_produto ={}".format(ean,nome, comboboxcat.get(),entryUnidade.get(),entrydescrição.get("1.0",END),prevenda,precusto,estoque,cod)
             print(sqlupdate)
             mycursor.execute(sqlupdate)
 
@@ -175,6 +176,13 @@ def MainProdutos():
         comboboxcat = ttk.Combobox(window, width=33, values="Lanches Salgados Doces Bebidas", state="readonly") # adicionando um Combobox
         #comboboxcat.set("Selecione") # o combobox inicia vazio se não for selecionado uma opção para ele iniciar | para fazer isso usa-se o .set
         comboboxcat.grid(row=3, column=1,padx=5,pady=3,ipady=3)
+
+         #Unidade
+        labelUnidade = gui.Label(window,text="Unidade:", bg="#C0C0C0", font="Britannic 10 bold")
+        labelUnidade.grid(row=3,column=2,sticky=W)
+
+        entryUnidade = gui.Entry(window, width=10, bd=4)
+        entryUnidade.grid(row=3, column=3,padx=5,pady=3,ipady=3,sticky=W)
         #preço de venda
         labelprevenda = gui.Label(window,text="Preço de venda:", font="Britannic 10 bold")
         labelprevenda.grid(row=0,column=2,sticky=W)
@@ -209,10 +217,11 @@ def MainProdutos():
         entryean.insert(0,produto[1])
         entrynome.insert(0,produto[2])
         comboboxcat.set(produto[3])
-        entrydescrição.insert(END,produto[4],'')
-        entryprevenda.insert(0,produto[5])
-        entryprecusto.insert(0,produto[6])
-        entryestoque.insert(0,produto[7])
+        entryUnidade.insert(0,produto[4])
+        entrydescrição.insert(END,produto[5],'')
+        entryprevenda.insert(0,produto[6])
+        entryprecusto.insert(0,produto[7])
+        entryestoque.insert(0,produto[8])
     
 
 
@@ -277,6 +286,15 @@ def MainProdutos():
     comboboxcat = ttk.Combobox(frame1, width=33, values="Lanches Salgados Doces Bebidas", state="readonly") # adicionando um Combobox
     comboboxcat.set("Selecione") # o combobox inicia vazio se não for selecionado uma opção para ele iniciar | para fazer isso usa-se o .set
     comboboxcat.grid(row=3, column=1,padx=5,pady=3,ipady=3)
+
+    #Unidade
+    labelUnidade = gui.Label(frame1,text="Unidade:", bg="#C0C0C0", font="Britannic 10 bold")
+    labelUnidade.grid(row=3,column=2,sticky=W)
+
+    entryUnidade = gui.Entry(frame1, width=10, bd=4)
+    entryUnidade.grid(row=3, column=3,padx=5,pady=3,ipady=3,sticky=W)
+
+
     #preço de venda
     labelprevenda = gui.Label(frame1,text="Preço de venda:", bg="#C0C0C0", font="Britannic 10 bold")
     labelprevenda.grid(row=0,column=2,sticky=W)

@@ -12,15 +12,17 @@ from datetime import date
 
 
 
+    
+      
 def MainVendas():
-
+      
       Pedidos_window = Toplevel()
       Pedidos_window.title("Lanchonete | Vendas")
       Pedidos_window.resizable(False, False) 
       Pedidos_window.geometry("750x500")      
       Pedidos_window.iconbitmap("imagens/ico.lanchonete.ico")
       Pedidos_window.configure(bg="#DCDCDC")
-          
+        
       def Ultimocodigo(): # Pega o maior valor da coluna cod_pedido para colocar na entry Cod           
 
             connection = mysql.connector.connect(host="localhost",user="root",password="",database="bdlanchonete")
@@ -38,12 +40,18 @@ def MainVendas():
             CodPedido_entry["state"] = "disabled"
           
       def tecla(e): # Função para quando apertar enter no teclado fazer o calculo
-
+            
             VlTotal_entry.delete(0,END) # Apagando o valor ja existente
             qtd = Qtd_label_entry.get() # pegando a quantidade
           
             vlUnit = VlUnit_entry.get() # pegando o valor unitario
             
+            if qtd == "" or vlUnit == "":
+                  messagebox.showwarning("Atenção","Digite os valores")
+                  
+                  Qtd_label_entry.focus()
+                  qtd = 1
+
             total = int(qtd) * float(vlUnit) # multiplicando a quantidade com o valor unitário
             VlTotal_entry.insert(0,total) # inserindo no campo
       def excluir_item_lista(): # função para excluir item selecionado
@@ -121,8 +129,9 @@ def MainVendas():
                               VlTotal_entry.delete(0,END)
 
                                     # Colocando os valos
-                              DescProd_entry.insert(0,produto[2])              
-                              VlUnit_entry.insert(0,produto[5])
+                              DescProd_entry.insert(0,produto[2])
+                              Un_entry.insert(0,produto[4])              
+                              VlUnit_entry.insert(0,produto[6])
 
 
                               qtd = Qtd_label_entry.get()               
@@ -197,6 +206,7 @@ def MainVendas():
                   mycursor = connection.cursor()
 
                   CodPedido_entry["state"] = "normal"
+                  CodOperador_entry["state"] = "normal"   
                   sqlselect = "SELECT cod_pedido  FROM  vendas where  cod_pedido = '{}' ".format(CodPedido_entry.get())  # like (parecido com)
             
                   mycursor.execute(sqlselect)
@@ -227,7 +237,7 @@ def MainVendas():
                         mycursor = connection.cursor()
 
                         CodPedido_entry["state"] = "normal"            
-                        sqlVenda = "INSERT  INTO vendas(cod_pedido,cod_operador,id_clientes,vl_total,pedido_fechado) VALUES('{}','{}','{}','{}','{}')".format(CodPedido_entry.get(),CodOperador_entry.get(),1,total_pedido_entry.get(),"S")
+                        sqlVenda = "INSERT  INTO vendas(cod_pedido,nome_operador,id_clientes,vl_total,pedido_fechado) VALUES('{}','{}','{}','{}','{}')".format(CodPedido_entry.get(),CodOperador_entry.get(),1,total_pedido_entry.get(),"S")
                         mycursor.execute(sqlVenda)         
 
                         mycursor.close()
@@ -261,6 +271,7 @@ def MainVendas():
                         total_pedido_entry.delete(0,END)
                         total_pedido_entry.insert(0,"0,00")
                         CodPedido_entry["state"] = "disabled"
+                        CodOperador_entry["state"] = "disabled"   
                         Ultimocodigo()
                         Pagamento_window.destroy() # Fecha a janela
                   else:
@@ -270,8 +281,9 @@ def MainVendas():
                         connection = pymysql.connect(host="localhost",user="root",password="",database="bdlanchonete")
                         mycursor = connection.cursor()
 
-                        CodPedido_entry["state"] = "normal"            
-                        sqlVenda = "INSERT  INTO vendas(cod_pedido,cod_operador,id_clientes,vl_total,pedido_fechado) VALUES('{}','{}','{}','{}','{}')".format(CodPedido_entry.get(),CodOperador_entry.get(),1,total_pedido_entry.get(),"N")
+                        CodPedido_entry["state"] = "normal" 
+                        CodOperador_entry["state"] = "normal"              
+                        sqlVenda = "INSERT  INTO vendas(cod_pedido,nome_operador,id_clientes,vl_total,pedido_fechado) VALUES('{}','{}','{}','{}','{}')".format(CodPedido_entry.get(),CodOperador_entry.get(),1,total_pedido_entry.get(),"N")
                         mycursor.execute(sqlVenda)         
 
                         mycursor.close()
@@ -305,6 +317,7 @@ def MainVendas():
                         total_pedido_entry.delete(0,END)
                         total_pedido_entry.insert(0,"0,00")
                         CodPedido_entry["state"] = "disabled"
+                        CodOperador_entry["state"] = "disabled"   
                         Ultimocodigo()
 
 
@@ -340,7 +353,8 @@ def MainVendas():
             for pagamento in mycursor:
                 
                   tipo.append(pagamento)
-                
+                  print(tipo)
+            print(tipo)   
 
             comboboxcat = ttk.Combobox(Pagamento_window, width=15, values=tipo, state="readonly") # adicionando um Combobox
             comboboxcat.set("Selecione") # o combobox inicia vazio se não for selecionado uma opção para ele iniciar | para fazer isso usa-se o .set
@@ -434,8 +448,9 @@ def MainVendas():
                   connection = pymysql.connect(host="localhost",user="root",password="",database="bdlanchonete")
                   mycursor = connection.cursor()
 
-                  CodPedido_entry["state"] = "normal"            
-                  sqlVenda = "INSERT  INTO vendas(cod_pedido,cod_operador,id_clientes,vl_total,pedido_fechado) VALUES('{}','{}','{}','{}','{}')".format(CodPedido_entry.get(),CodOperador_entry.get(),"teste",total_pedido_entry.get(),"N")
+                  CodPedido_entry["state"] = "normal" 
+                  CodOperador_entry["state"] = "normal"                              
+                  sqlVenda = "INSERT  INTO vendas(cod_pedido,nome_operador,id_clientes,vl_total,pedido_fechado) VALUES('{}','{}','{}','{}','{}')".format(CodPedido_entry.get(),CodOperador_entry.get(),"teste",total_pedido_entry.get(),"N")
                   mycursor.execute(sqlVenda)         
 
                   mycursor.close()
@@ -466,6 +481,7 @@ def MainVendas():
                   total_pedido_entry.delete(0,END)
                   total_pedido_entry.insert(0,"0,00")
                   CodPedido_entry["state"] = "disabled"
+                  CodOperador_entry["state"] = "disabled" 
                   Ultimocodigo()
             else:
                   print("Não tem pedido")
@@ -473,8 +489,9 @@ def MainVendas():
                   connection = pymysql.connect(host="localhost",user="root",password="",database="bdlanchonete")
                   mycursor = connection.cursor()
 
-                  CodPedido_entry["state"] = "normal"            
-                  sqlVenda = "INSERT  INTO vendas(cod_pedido,cod_operador,id_clientes,vl_total,pedido_fechado) VALUES('{}','{}','{}','{}','{}')".format(CodPedido_entry.get(),CodOperador_entry.get(),"teste",total_pedido_entry.get(),"N")
+                  CodPedido_entry["state"] = "normal"
+                  CodOperador_entry["state"] = "normal"            
+                  sqlVenda = "INSERT  INTO vendas(cod_pedido,nome_operador,id_clientes,vl_total,pedido_fechado) VALUES('{}','{}','{}','{}','{}')".format(CodPedido_entry.get(),CodOperador_entry.get(),"teste",total_pedido_entry.get(),"N")
                   mycursor.execute(sqlVenda)         
 
                   mycursor.close()
@@ -505,6 +522,7 @@ def MainVendas():
                   total_pedido_entry.delete(0,END)
                   total_pedido_entry.insert(0,"0,00")
                   CodPedido_entry["state"] = "disabled"
+                  CodOperador_entry["state"] = "disabled"
                   Ultimocodigo()
       def PesquisarPedido(): # Função para pesquisar pedido
 
@@ -588,7 +606,7 @@ def MainVendas():
                   mycursor.execute(sqlEstoqueAtual)
 
                   for estoqueAtual in mycursor:
-                        #print(estoqueAtual)
+                        print(estoqueAtual)
                         UpdateEstoque = int(estoqueAtual[0]) - int(qtd) # fazendo a operação para diminuir a quantidade vendida
 
                         connection = pymysql.connect(host="localhost",user="root",password="",database="bdlanchonete")
@@ -640,7 +658,7 @@ def MainVendas():
 
                   for venda in mycursor:
                         cod_pedido = venda[0]
-                        cod_operador = venda[1]
+                        nome_operador = venda[1]
                         id_clientes = venda[2]
                         vl_total = venda[3]
                         data_create = venda[5]
@@ -688,8 +706,7 @@ def MainVendas():
                   for pagamento in mycursor:
                         pedido.write(str(pagamento[1]) +"................R$ " + str(pagamento[2]) + "\n" )
                   pedido.write("Total................R$ " + str(vl_total))
-                
-                  
+            
 
       def ImprimirArquivo(numeroPedido,event=None): #Função para Imprimir o Pedido
             try:
@@ -731,8 +748,21 @@ def MainVendas():
       CodOperador_label = Label(Pedidos_window,text="Operador:",bg="#C0C0C0", font="Britannic 10 bold")
       CodOperador_label.grid(row=0,column=2,sticky=W)
       
+      
+      connection = mysql.connector.connect(host="localhost",user="root",password="",database="bdlanchonete")
+      mycursor = connection.cursor()
+
+      sqlselectUsuario = "select * from log_usuario "  # like (parecido com)            
+      mycursor.execute(sqlselectUsuario)
+
+      for user in mycursor:
+            usuario = user[0]
+
       CodOperador_entry = Entry(Pedidos_window,width=15, bd=4)
       CodOperador_entry.grid(row=0,column=3,sticky=W)
+
+      CodOperador_entry.insert(0,usuario)
+      CodOperador_entry["state"] = "disabled"
 
       #Pesquisar Pedido
       Cod_Pesquisa_label = Label(Pedidos_window,text="Pesquisar pedido:",bg="#C0C0C0", font="Britannic 10 bold")
@@ -769,7 +799,7 @@ def MainVendas():
 
       Un_entry = Entry(Pedidos_window,width=7, bd=4)
       Un_entry.place(x=350,y=25)
-      Un_entry.insert(0,"UN")
+      
       #quantidade
       Qtd_label = Label(Pedidos_window,text="Qtd.:",width=7, bg="#C0C0C0",font="Britannic 10 bold")
       Qtd_label.place(x=410,y=25)
@@ -778,14 +808,14 @@ def MainVendas():
       Qtd_label_entry = Entry(Pedidos_window,width=16, bd=4)
       Qtd_label_entry.place(x=480,y=25)
       Qtd_label_entry.insert(0,1)
-      Qtd_label_entry.bind("<Key>", tecla)
+      Qtd_label_entry.bind("<Return>", tecla)
       #valor
       VlUnit_label = Label(Pedidos_window,text="Valor Unit:",bg="#C0C0C0", font="Britannic 10 bold")
       VlUnit_label.grid(row=3,column=0,sticky=W)
 
       VlUnit_entry = Entry(Pedidos_window,width=10, bd=4)
       VlUnit_entry.grid(row=3,column=1,sticky=W)
-      VlUnit_entry.bind("<Key>", tecla)
+      VlUnit_entry.bind("<Return>", tecla)
       #valor total
       VlTotal_label = Label(Pedidos_window,text="Total:",bg="#C0C0C0", font="Britannic 10 bold")
       VlTotal_label.place(x=160,y=50)
@@ -837,6 +867,8 @@ def MainVendas():
       ShowItens_tv.heading('valorunit',text="Vr Unitário")
       ShowItens_tv.heading('valortotal',text="Vr Total")
       ShowItens_tv.place(x=90,y=100)
+
+      
 
 
       Pedidos_window.mainloop()

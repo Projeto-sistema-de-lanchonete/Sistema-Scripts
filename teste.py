@@ -1,187 +1,129 @@
-import os
-import sys
-import win32net
-import string
-import time
-import copy
-import getopt
+import win32api
+import win32print
+import traceback
 
-#the extension module
-import fileperm
+from tkinter.filedialog import askopenfilename
+from tkinter import *
+from tkinter import font # * doesn't import font or messagebox
+from tkinter import messagebox
 
-All_perms={
-    1:"ACCESS_READ",            #0x00000001
-    2:"ACCESS_WRITE",           #0x00000002
-    4:"ACCESS_CREATE",          #0x00000004
-    8:"ACCESS_EXEC",            #0x00000008
-    16:"ACCESS_DELETE",         #0x00000010
-    32:"ACCESS_ATRIB [sic]",    #0x00000020
-    64:"ACCESS_PERM",           #0x00000040
-    32768:"ACCESS_GROUP",       #0x00008000
-    65536:"DELETE",             #0x00010000
-    131072:"READ_CONTROL",      #0x00020000
-    262144:"WRITE_DAC",         #0x00040000
-    524288:"WRITE_OWNER",       #0x00080000
-    1048576:"SYNCHRONIZE",      #0x00100000
-    16777216:"ACCESS_SYSTEM_SECURITY",#0x01000000
-    33554432:"MAXIMUM_ALLOWED", #0x02000000
-    268435456:"GENERIC_ALL",    #0x10000000
-    536870912:"GENERIC_EXECUTE",#0x20000000
-    1073741824:"GENERIC_WRITE", #0x40000000
-    65535:"SPECIFIC_RIGHTS_ALL",#0x0000ffff
-    983040:"STANDARD_RIGHTS_REQUIRED",#0x000f0000
-    2031616:"STANDARD_RIGHTS_ALL",#0x001f0000
-    }
+root = Tk()
+root.title("Python Printer")
+root.geometry("410x310")
+root.resizable(False, False)
+root.tk.call('encoding', 'system', 'utf-8')
 
-# Typical_perms={
-#     #2032127L:"Full Control(All)",
-#     1179817L:"Read(RX)",
-#     1180086L:"Add",
-#     1180095L:"Add&Read",
-#     1245631L:"Change"
-# }
+def font_size(fs):
+    return font.Font(family='Helvetica', size=fs, weight='bold')
 
+# Add a grid
+mainframe = Frame(root)
+#mainframe.grid(column=0,row=0, sticky=(N,W,E,S) )
+mainframe.grid(column=0,row=0, sticky=(N) )
+mainframe.columnconfigure(0, weight = 1)
+mainframe.rowconfigure(0, weight = 1)
+mainframe.pack(pady = 10, padx = 0)
 
-def get_mask(mask):
-    a=2147483648L
-    if Typical_perms.has_key(mask):
-        return Typical_perms[mask]
-    else:
-        result=''
-        while a>>1:
-            a=a>>1
-            masked=mask&a
-            if masked:
-                if All_perms.has_key(masked):
-                    result=All_perms[masked]+':'+result
-    return result
+# Create a _printer variable
+_printer = StringVar(root)
+# Create a _color variable
+_color = StringVar(root)
+_filename = ""
 
+# on change dropdown value
+def sel_printer(*args):
+    print( _printer.get() )
+# link function to change dropdown
+_printer.trace('w', sel_printer)
 
-def is_group(sys_id):
-    #get the server for the domain -- it has to be a primary dc
-    group=0
-    resume=0
-    sys_id=string.strip(sys_id)
-    if D_group.has_key(sys_id):
-        group=1
-    elif D_except.has_key(sys_id):
-        group=0
-    else:
-        try:
-            #info returns a dictionary of information
-            info = win32net.NetGroupGetInfo(Server, sys_id, 0)
-            group=1
-        except:
-            try:
-                win32net.NetLocalGroupGetMembers(Server, sys_id, 0,resume,4096)
-                group=1
-            except:
-                pass
-    return group
+def sel_color(*args):
+    print( _color.get() )
+# link function to change dropdown
+_color.trace('w', sel_color)
 
+def UploadAction(event=None):
+    global _filename
+    _filename = filedialog.askopenfilename()
+    #print('Selected:', _filename)
 
-def get_perm_base(file):
-    all_perms=fileperm.get_perms(file)
-    for (domain_id,mask) in all_perms.items():
-        (domain,sys_id)=string.split(domain_id,'\\',1)
-        mask_name=get_mask(mask)
-        Results.append(file+','+sys_id+','+mask_name)
+def PrintAction(event=None):
 
-def get_perm(file):
-    perm_list=[]
-    perm_list.append(file)
-    all_perms=fileperm.get_perms(file)
-    for (domain_id,mask) in all_perms.items():
-        (domain,sys_id)=string.split(domain_id,'\\',1)
-        print domain,sys_id
-        sys_id=str(sys_id)
-        mask_name=get_mask(mask)
-        if len(sys_id)<7:
-            perm_list.append(sys_id+'\t\t\t'+mask_name)
-        elif len(sys_id)>14:
-            perm_list.append(sys_id+'\t'+mask_name)
-        else:
-            perm_list.append(sys_id+'\t\t'+mask_name)
-    return perm_list
-def get_perms(arg, d, files):
-    a=2147483648L #1L<<31L
-    print 'Now at ',d
-    for i in files:
-        file=d+'\\'+i
-        if opts['-d']:
-            if not os.path.isdir(file): # skip non-directories
-                continue
-        all_perms=fileperm.get_perms(file)
-        for (domain_id,mask) in all_perms.items():
-            if string.find(domain_id,'\\')!=-1:
-                (domain,sys_id)=string.split(domain_id,'\\',1)
-            else:
-                sys_id=domain_id
-            mask_name=get_mask(mask)    
-            Results.append(file+','+sys_id+','+mask_name)
-    Results.sort()
-    return Results
-######################################################################################################
-#h - help
-#r - recursive
-#o - output file
-#d - directories only
+    PRINTER_DEFAULTS = {"DesiredAccess":win32print.PRINTER_ALL_ACCESS} 
+    pHandle = win32print.OpenPrinter(_printer.get(), PRINTER_DEFAULTS)
+    properties = win32print.GetPrinter(pHandle, 2)
+    properties['pDevMode'].Color = 1 if str(_color.get()) == "Color" else 2
+    properties['pDevMode'].Copies = 1
+    win32print.SetPrinter(pHandle, 2, properties, 0)
 
-domain='bedrock'
+    if not _filename:
+        messagebox.showerror("Error", "No File Selected")
+        return
+    elif not _printer.get():
+        messagebox.showerror("Error", "No Printer Selected")
+        return
 
-Server=str(win32net.NetGetDCName("",domain))
-print '************************ Using domain ',domain
-
-only_dir=0
-D_group={}
-D_except={}
-if len(sys.argv)==1:
-    print sys.argv[0]," file or directory"
-    print "-r for recursive mode \n-o for output file (default screen) \n-d for directories only"
-    print 'Example:',sys.argv[0],'-o a.txt -r c:\\junk  \n ----goes down dir tree in c:\\junk and saves in a.txt'
-    sys.exit(0)    
-else:
     try:
-        optlist, args = getopt.getopt(sys.argv[1:], 'dho:r')
-    except getopt.error:
-       print "invalid option.  available options are: -d -h -r -o "
-       print "-r for recursive mode \n-o for output file (default screen) \n-d for directories only"
+        #win32print.SetDefaultPrinter(_printer.get())
+        win32api.ShellExecute(0, "print", _filename, None,  ".",  0)
+        win32print.ClosePrinter(pHandle)
+    except:
+        pass
+        messagebox.showerror("Error", "There was an error printing the file :(")
 
-       sys.exit(0)
+choices = [printer[2] for printer in win32print.EnumPrinters(2)]
+_printer.set(win32print.GetDefaultPrinter()) # set the default option
 
-    opts = {'-d':0,'-h':0,'-o':0,'-r':0}
-    for key, value in optlist:
-        opts[key]=1
-        if key == '-o':
-            opts[key]=value
-    init=time.clock()
+popupMenu = OptionMenu(mainframe, _printer, *choices)
+popupMenu['font'] = font_size(12)
+Label(mainframe, text="SELECT PRINTER").grid(row = 1, column = 1)
+popupMenu.grid(row = 2, column =1)
+
+# Dictionary with options
+choices = ["COLOR", "MONOCHROME"]
+_color.set("COLOR") # set the default option
+
+popupMenu2 = OptionMenu(mainframe, _color, *choices)
+popupMenu2['font'] = font_size(12)
+Label(mainframe, text="COLOR MODE").grid(row = 3, column = 1)
+popupMenu2.grid(row = 4, column =1)
+
+Label(mainframe, text="SELECT FILE").grid(row = 5, column = 1)
+button = Button(mainframe, text=u"\uD83D\uDCC1" ' BROWSE', command=UploadAction)
+button['font'] = font_size(12)
+button.grid(row = 6, column =1)
 
 
-    Results=[]
-    if opts['-r']:
-        if os.path.isdir(args[0]):
-            print 'walking thru',args[0]
-            get_perm_base(args[0])
-            os.path.walk(args[0],get_perms,opts['-d'])
-        else:
-            print 'Directory',args[0],'does not exist'
-            sys.exit(0)
-    else:
-        if os.path.exists(args[0]):
-            Results=get_perm(args[0])
-        else:
-            print 'Directory or file',args[0],'does not exist'
-            sys.exit(0)
-        
-    #now print out the results
-    if opts['-o']:
-        #send to a file
-        print 'Storing results in',opts['-o']
-        f=open(opts['-o'],'w')
-        for i in Results:
-            f.write(i)
-            f.write('\n')
-    else:
-        for i in Results:
-            print i
-        end = time.clock()-init
+_copies = IntVar()
+_copies.set(1)
+
+def copies_increase(event=None):
+    _copies.set(_copies.get() + 1)
+
+def copies_decrease(event=None):
+    _copies.set(_copies.get() - 1)
+    if _copies.get() < 1 :
+        _copies.set(1)
+
+Label(mainframe, textvariable=_copies).grid(columnspan=2)
+button_frame = Frame(mainframe)
+button_frame.grid(columnspan=2)
+
+
+dec_button = Button(button_frame, text=u"\u2212", command=copies_decrease, fg="dark green", bg = "white", height=1, width=3 )
+dec_button['font'] = font_size(10)
+
+inc_button = Button(button_frame, text=u"\uFF0B", command=copies_increase, fg="dark green", bg = "white", height=1, width=3 )
+inc_button['font'] = font_size(10)
+
+button_frame.columnconfigure(0, weight=1)
+button_frame.columnconfigure(1, weight=1)
+
+dec_button.grid(row=0, column=0, sticky=W+E)
+inc_button.grid(row=0, column=1, sticky=W+E)
+
+Label(mainframe).grid(row = 10, column = 1)
+p_button = Button(mainframe, text=u'\uD83D\uDDB6' + " PRINT", command=PrintAction, fg="dark green", bg = "white")
+p_button['font'] = font_size(18)
+p_button.grid(row = 11, column =1)
+
+root.mainloop()

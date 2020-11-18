@@ -1,8 +1,10 @@
 import tkinter as gui
 from tkinter import *
-from menu import MainMenu
 from tkinter import messagebox
 import mysql.connector
+from menu import MainMenu
+
+
 
 def MainLogin():
 
@@ -15,7 +17,7 @@ def MainLogin():
       def ValidarUser():
             user = str(entryuser.get())
             password = str(entrypassword.get())
-            
+            # User(user)
             connection = mysql.connector.connect(host="localhost",user="root",password="",database="bdlanchonete")
             mycursor = connection.cursor()
 
@@ -25,8 +27,37 @@ def MainLogin():
             valido = mycursor.fetchall()
 
             if len(valido) > 0:
+                  connection = mysql.connector.connect(host="localhost",user="root",password="",database="bdlanchonete")
+                  mycursor = connection.cursor()
+
+                  sqlselectUsuario = "select * from log_usuario "  # like (parecido com)            
+                  mycursor.execute(sqlselectUsuario)
+                  validarUsuario = mycursor.fetchall()
+
+                  if len(validarUsuario) > 0:
+                        connection = mysql.connector.connect(host="localhost",user="root",password="",database="bdlanchonete")
+                        mycursor = connection.cursor()
+
+                        sqlDeleteUsuario = "DELETE FROM  log_usuario "
+                        mycursor.execute(sqlDeleteUsuario)
+                        connection.commit()    
+
+                        sqlInsertUsuario = "INSERT INTO log_usuario(nome) VALUES('{}')".format(user)
+                        mycursor.execute(sqlInsertUsuario)
+                        connection.commit()    
+
+                  else:
+                        connection = mysql.connector.connect(host="localhost",user="root",password="",database="bdlanchonete")
+                        mycursor = connection.cursor()
+                        sqlInsertUsuario = "INSERT INTO log_usuario(nome) VALUES('{}')".format(user)
+                        mycursor.execute(sqlInsertUsuario)
+                        connection.commit()    
+
+
                   window.destroy()
-                  btentrar["command"] = MainMenu()
+                  MainMenu()                 
+
+
             else:
                   messagebox.showwarning("Warning","Usuário ou senha inválida!")
                   # entryuser.delete(0, END)
@@ -84,5 +115,12 @@ def MainLogin():
 
       # -------------Loop End----------------------------
       window.mainloop()
+      def User(user):
+
+            print(user)
+            return user
+
+      
+      
 
 MainLogin()
