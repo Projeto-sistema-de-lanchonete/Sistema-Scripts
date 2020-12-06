@@ -101,6 +101,10 @@ def MainMenu():
     exibir.add_command(label="Fornecedor",command=MainFornecedor)
     exibir.add_separator()  
     exibir.add_command(label="Tipos Pagamentos",command=TipoPagamentos)
+    
+    estoque = Menu(menu_bar,tearoff=0)
+    menu_bar.add_cascade(label="Estoque",menu=estoque)
+    estoque.add_command(label="Entrada de Notas",command=MainMEntradaDeNotas)
 
     exibir = Menu(menu_bar,tearoff=0)
     menu_bar.add_cascade(label="Ajuda",menu=exibir)
@@ -110,9 +114,6 @@ def MainMenu():
     exibir.add_separator()   
     exibir.add_command(label="Telefone e informações de contato")
 
-    estoque = Menu(menu_bar,tearoff=0)
-    menu_bar.add_cascade(label="Estoque",menu=estoque)
-    estoque.add_command(label="Entrada de Notas",command=MainMEntradaDeNotas)
     
 
     window.configure(menu=menu_bar)

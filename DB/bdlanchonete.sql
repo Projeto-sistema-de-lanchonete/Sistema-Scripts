@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Tempo de geração: 18-Nov-2020 às 04:38
+-- Tempo de geração: 06-Dez-2020 às 01:36
 -- Versão do servidor: 10.4.14-MariaDB
 -- versão do PHP: 7.2.33
 
@@ -53,9 +53,7 @@ INSERT INTO `clientes` (`cod_cliente`, `nome_cliente`, `datanasc_cliente`, `cpf_
 (1, 'itamar Nascimento', '1992-11-01', '08919673462', '7996030', 'rua tal', '237', 'fragoso', '52130360', 'olinda', 'PE', '', '81985278547', 'itamarasa@gmail.com'),
 (2, 'debora', '0000-00-00', '', '', '', '', '', '', '', 'PE', '', '', ''),
 (6, 'neto', '0000-00-00', '', '', '', '', '', '', '', '', '', '', ''),
-(7, 'merabe', '0000-00-00', '', '', '', '', '', '', '', '', '', '', ''),
-(8, '', '0000-00-00', '', '', '', '', '', '', '', '', '', '', ''),
-(9, '', '2020-10-01', '', '', '', '', '', '', '', '', '', '', '');
+(7, 'merabe', '0000-00-00', '', '', '', '', '', '', '', '', '', '', '');
 
 -- --------------------------------------------------------
 
@@ -319,6 +317,13 @@ INSERT INTO `itens_venda` (`id_venda`, `cod_prod_venda`, `prod_des_venda`, `un_v
 CREATE TABLE `log_usuario` (
   `nome` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Extraindo dados da tabela `log_usuario`
+--
+
+INSERT INTO `log_usuario` (`nome`) VALUES
+('itamar');
 
 -- --------------------------------------------------------
 
